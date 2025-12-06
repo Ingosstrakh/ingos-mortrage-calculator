@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бастион — Ингосстрах</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Геройская секция -->
+  <header class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <div class="logo-icon">🏛️</div>
+        <h1 class="hero-title">ИНГОССТРАХ</h1>
+        <div class="hero-subtitle">Имущество Физических лиц</div>
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="main-content">
+    <div class="container">
+      <a href="index.html" class="back-button">
+        <span>←</span> <span>Назад к выбору продуктов</span>
+      </a>
+      <div class="header"><h1 style="margin:0">Бастион</h1></div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="h2">Описание</div>
+      <div class="small-block">Продукт по защите от военных рисков жилых объектов. Выберите тип объекта и под-объекты (конструктив/отделка). Тарифы скрыты.</div>
+    </div>
+
+    <div class="grid" style="margin-top:8px">
+      <div class="card">
+        <div class="h2">Тип объекта</div>
+        <label><input type="radio" name="objt" value="flat"> Квартира / Комната</label>
+        <label style="margin-left:8px"><input type="radio" name="objt" value="house"> Жилой дом / Таунхаус</label>
+
+        <div class="box" style="margin-top:12px">
+          <label><input type="checkbox" id="b_cons"> Конструктивные элементы</label>
+          <div style="margin-left:12px">Сумма: <input id="b_sum_cons" type="number"></div>
+        </div>
+
+        <div class="box">
+          <label><input type="checkbox" id="b_finish"> Отделка и инженерное оборудование</label>
+          <div style="margin-left:12px">Сумма: <input id="b_sum_finish" type="number"></div>
+        </div>
+
+        <div id="b_error" class="error"></div>
+        <div id="b_result" class="total">Итоговая премия: 0 ₽</div>
+
+      </div>
+
+      <div class="card">
+        <div class="h2">Риски (точно по правилу)</div>
+        <div class="small-block">
+          ► Военных действий, маневров, учений или операций военного характера любого рода, включая контртеррористические операции, действий по поддержанию мира, действий правоохранительных органов, народного ополчения в рамках проведения специальных военных операций или антитеррористических операций.<br><br>
+          ► Использования любого вида оружия, ракет, снарядов, мин, бомб и иных боеприпасов, а также действий сил противовоздушной обороны.<br><br>
+          ► Воздействия пилотируемых и беспилотных летательных аппаратов (включая падение их частей), применения в связи с военными действиями... (п.14.1.3).<br><br>
+          ► «Гражданская ответственность» — причинение вреда жизни и здоровью третьим лицам.<br><br>
+          ► «Теракт» — повреждение либо утрата имущества вследствие террористического акта.<br><br>
+          ► «Механическое повреждение» — падение БПЛА либо их частей.
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="h2">Запретительные факторы</div>
+          <div class="small-block">
+            • ЛНР, ДНР, Республика Крым, Херсонская область, Севастополь; • Белгородская, Курская, Брянская области; • Отдельные районы Воронежской, Ростовской, Краснодарского краевой перечня; • Запорожская область; • Неработоспособное имущество; • Коммерческое использование.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { T_BASTION } from './tariffs.bastion.js';
+    const get = id => document.getElementById(id);
+    const err = get('b_error');
+    const res = get('b_result');
+
+    function fmt(n){return new Intl.NumberFormat('ru-RU').format(Math.round(n));}
+
+    function updateBastion(){
+      err.textContent = '';
+      res.textContent = 'Итоговая премия: 0 ₽';
+      const type = document.querySelector('input[name="objt"]:checked')?.value;
+      if (!type) { err.textContent = 'Выберите тип объекта'; return; }
+
+      const consChecked = get('b_cons').checked;
+      const finishChecked = get('b_finish').checked;
+      if (!consChecked && !finishChecked) { err.textContent = 'Выберите хотя бы один под-объект'; return; }
+
+      let total = 0;
+      if (consChecked){
+        const v = Number(get('b_sum_cons').value || 0);
+        const min = T_BASTION[type].cons.min, max = T_BASTION[type].cons.max;
+        if (v < min || v > max) { err.textContent = `Конструктив: допустимый диапазон ${min.toLocaleString()} — ${max.toLocaleString()} ₽`; return; }
+        total += v * T_BASTION[type].cons.rate;
+      }
+      if (finishChecked){
+        const v = Number(get('b_sum_finish').value || 0);
+        const min = T_BASTION[type].finish.min, max = T_BASTION[type].finish.max;
+        if (v < min || v > max) { err.textContent = `Отделка: допустимый диапазон ${min.toLocaleString()} — ${max.toLocaleString()} ₽`; return; }
+        total += v * T_BASTION[type].finish.rate;
+      }
+
+      res.textContent = 'Итоговая премия: ' + fmt(total) + ' ₽';
+    }
+
+    // Добавляем обработчики событий
+    document.querySelectorAll('input[name="objt"]').forEach(r => r.addEventListener('change', updateBastion));
+    get('b_cons').addEventListener('change', updateBastion);
+    get('b_finish').addEventListener('change', updateBastion);
+    get('b_sum_cons').addEventListener('input', updateBastion);
+    get('b_sum_finish').addEventListener('input', updateBastion);
+  </script>
+</body>
+</html>

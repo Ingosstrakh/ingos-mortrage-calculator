@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Моя квартира — Ингосстрах</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Геройская секция -->
+  <header class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <div class="logo-icon">🏛️</div>
+        <h1 class="hero-title">ИНГОССТРАХ</h1>
+        <div class="hero-subtitle">Имущество Физических лиц</div>
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="main-content">
+    <div class="container">
+      <a href="index.html" class="back-button">
+        <span>←</span> <span>Назад к выбору продуктов</span>
+      </a>
+      <div class="header"><h1 style="margin:0">Моя квартира</h1></div>
+
+    <div class="grid" style="margin-top:14px">
+      <div class="card">
+        <div class="h2">Описание продукта</div>
+        <div class="small-block">
+          Продукт-конструктор по защите квартиры (без оценки/осмотра). Можно выбирать объекты, лимиты, систему возмещения и дополнительные группы рисков.
+        </div>
+
+        <div class="box controls" style="margin-top:12px">
+          <div class="h2">Система возмещения</div>
+          <label><input type="radio" name="recomp" value="old" checked> СТАРОЕ ЗА СТАРОЕ</label>
+          <label><input type="radio" name="recomp" value="new"> НОВОЕ ЗА СТАРОЕ ( +10% к премии по конструктиву / отделке / движимому )</label>
+        </div>
+
+        <div class="box">
+          <div class="h2">Объекты</div>
+
+          <label><input type="checkbox" id="chk_cons"> Конструктивные элементы</label>
+          <div id="blk_cons" class="small-block" style="margin-left:14px;display:none">
+            Лимит (руб): <input id="sum_cons" type="number" placeholder="введите сумму"><br>
+            (в расчете показано только итоговое значение — тариф скрыт)
+          </div>
+
+          <label style="margin-top:8px"><input type="checkbox" id="chk_finish"> Отделка и инженерное оборудование</label>
+          <div id="blk_finish" style="margin-left:14px;display:none">
+            Лимит (руб): <input id="sum_finish" type="number" placeholder="введите сумму"><br>
+            <div style="margin-top:6px">
+              <label><input type="checkbox" id="fin_gr1"> Группа рисков 1 <span class="tooltip">?</span></label>
+              <div style="margin-left:8px">Лимит для группы: <input id="sum_fin_gr1" type="number"></div>
+
+              <label style="margin-top:6px"><input type="checkbox" id="fin_gr23"> Группа рисков 2+3 <span class="tooltip">?</span></label>
+              <div style="margin-left:8px">Лимит для группы: <input id="sum_fin_gr23" type="number"></div>
+            </div>
+          </div>
+
+          <label style="margin-top:8px"><input type="checkbox" id="chk_mov"> Движимое имущество</label>
+          <div id="blk_mov" style="margin-left:14px;display:none">
+            Лимит (руб): <input id="sum_mov" type="number" placeholder="введите сумму"><br>
+            <div style="margin-top:6px">
+              <label><input type="checkbox" id="mov_gr1"> Группа рисков 1</label>
+              <div style="margin-left:8px">Лимит для группы: <input id="sum_mov_gr1" type="number"></div>
+
+              <label style="margin-top:6px"><input type="checkbox" id="mov_gr23"> Группа рисков 2+3</label>
+              <div style="margin-left:8px">Лимит для группы: <input id="sum_mov_gr23" type="number"></div>
+            </div>
+          </div>
+
+          <label style="margin-top:8px"><input type="checkbox" id="chk_go"> Гражданская ответственность (ГО)</label>
+          <div id="blk_go" style="margin-left:14px;display:none">
+            Лимит (руб): <input id="sum_go" type="number" placeholder="введите сумму">
+          </div>
+
+          <div style="margin-top:8px" class="small-block">
+            <span class="tooltip">?</span> Подсказки по групповым рискам:<br>
+            <b>Группа рисков 1</b> — атмосферные осадки; давление снега; воздействие воды/жидкостей из систем вне участка.<br>
+            <b>Группа рисков 2+3</b> — повреждения вследствие нарушения норм пожарной безопасности, эксплуатации систем, дефектов строительства и т.п.
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="card">
+        <div class="h2">Итог расчёта</div>
+        <div id="error1" class="error"></div>
+        <table class="table" id="res_table">
+          <thead><tr><th>Застраховано</th><th style="text-align:right">Стоимость, ₽</th></tr></thead>
+          <tbody id="res_body"></tbody>
+        </table>
+        <div class="total">Итого: <span id="res_total">0</span> ₽</div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="h2">Риски (полный текст)</div>
+          <div class="small-block">
+            ► Пожар, взрыв, повреждение водой, механическое повреждение, кража, грабеж, разбой, умышленные действия, вред со стороны третьих лиц, стихийное бедствие, теракт, короткое замыкание.<br>
+            ► «Повреждение инженерных систем» — как в правилах. (текст по скрину)
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="h2">Запретительные факторы</div>
+          <div class="small-block">
+            • За пределами РФ, опасные территории; • Износ &gt;= 70%; • Аварийное состояние, под снос, «реновация» и подвальные помещения; • Выведенные из жилого фонда; • Квартиры в деревянном доме, в доме с деревянными или смешанными перекрытиями; • Бараки; • Наличные деньги, драгметаллы, ценные бумаги; • Коммунальные квартиры; • Печное отопление; • Для коммерческих целей; • Аренда &lt; 1 мес.; • Части квартиры выгодоприобретателя.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { T_MOYA } from './tariffs.moyakvartira.js';
+
+    // helpers
+    const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n));
+
+    // UI elements
+    const chk_cons = document.getElementById('chk_cons');
+    const chk_finish = document.getElementById('chk_finish');
+    const chk_mov = document.getElementById('chk_mov');
+    const chk_go = document.getElementById('chk_go');
+
+    const blk_cons = document.getElementById('blk_cons');
+    const blk_finish = document.getElementById('blk_finish');
+    const blk_mov = document.getElementById('blk_mov');
+    const blk_go = document.getElementById('blk_go');
+
+    const sum_cons = document.getElementById('sum_cons');
+    const sum_finish = document.getElementById('sum_finish');
+    const sum_mov = document.getElementById('sum_mov');
+    const sum_go = document.getElementById('sum_go');
+
+    const fin_gr1 = document.getElementById('fin_gr1');
+    const fin_gr23 = document.getElementById('fin_gr23');
+    const mov_gr1 = document.getElementById('mov_gr1');
+    const mov_gr23 = document.getElementById('mov_gr23');
+
+    const sum_fin_gr1 = document.getElementById('sum_fin_gr1');
+    const sum_fin_gr23 = document.getElementById('sum_fin_gr23');
+    const sum_mov_gr1 = document.getElementById('sum_mov_gr1');
+    const sum_mov_gr23 = document.getElementById('sum_mov_gr23');
+
+    const res_body = document.getElementById('res_body');
+    const res_total = document.getElementById('res_total');
+    const error1 = document.getElementById('error1');
+
+    function showHide(box, checked){
+      box.style.display = checked ? 'block' : 'none';
+    }
+
+    // events
+    [chk_cons, chk_finish, chk_mov, chk_go].forEach(cb => cb.addEventListener('change', e => {
+      showHide(blk_cons, chk_cons.checked);
+      showHide(blk_finish, chk_finish.checked);
+      showHide(blk_mov, chk_mov.checked);
+      showHide(blk_go, chk_go.checked);
+      recalc();
+    }));
+
+    [sum_cons, sum_finish, sum_mov, sum_go,
+     sum_fin_gr1, sum_fin_gr23, sum_mov_gr1, sum_mov_gr23].forEach(el => el && el.addEventListener('input', recalc));
+    [fin_gr1, fin_gr23, mov_gr1, mov_gr23].forEach(el => el && el.addEventListener('change', recalc));
+    document.getElementsByName('recomp').forEach(r => r.addEventListener('change', recalc));
+
+    // helpers for ranges
+    function rateFromTable(table, sum){
+      const t = table.find(r => sum >= r.min && sum <= r.max);
+      return t ? t.rate : 0;
+    }
+
+    function recalc(){
+      error1.textContent = '';
+      res_body.innerHTML = '';
+      let total = 0;
+      const selected = [chk_cons.checked, chk_finish.checked, chk_mov.checked, chk_go.checked].some(x => x);
+
+      if (!selected) { error1.textContent = 'Выберите хотя бы один объект'; res_total.textContent = '0'; return; }
+
+      const recomp = document.querySelector('input[name="recomp"]:checked')?.value === 'new';
+
+      // constructive
+      if (chk_cons.checked){
+        const s = Number(sum_cons.value || 0);
+        if (s <= 0) { error1.textContent = 'Введите сумму для конструктивных элементов'; return; }
+        // tariff logic hidden from user
+        const others = (chk_finish.checked || chk_mov.checked || chk_go.checked);
+        const rate = others ? T_MOYA.constructive.withOthers : T_MOYA.constructive.only;
+        let prem = s * rate;
+        // apply new-for-old only to constructive
+        if (recomp) prem = prem * 1.1;
+        total += prem;
+        res_body.insertAdjacentHTML('beforeend', `<tr><td>Конструктивные элементы</td><td class="right">${fmt(prem)}</td></tr>`);
+        res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Стандартный пакет</td><td class="right">${fmt(prem)}</td></tr>`);
+      }
+
+      // finish
+      if (chk_finish.checked){
+        const s = Number(sum_finish.value || 0);
+        if (s <= 0) { error1.textContent = 'Введите сумму для отделки'; return; }
+        const rate = rateFromTable(T_MOYA.finish, s);
+        if (!rate) { error1.textContent = 'Отделка: сумма вне поддерживаемых диапазонов'; return; }
+        let prem = s * rate;
+        // apply new-for-old to finish
+        if (recomp) prem = prem * 1.1;
+        total += prem;
+        res_body.insertAdjacentHTML('beforeend', `<tr><td>Отделка и инж. оборудование</td><td class="right">${fmt(prem)}</td></tr>`);
+        // group risks for finish
+        if (fin_gr1.checked){
+          const lim = Number(sum_fin_gr1.value || s);
+          const grPrem = lim * T_MOYA.risks.gr1;
+          total += grPrem;
+          res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Группа рисков 1</td><td class="right">${fmt(grPrem)}</td></tr>`);
+        }
+        if (fin_gr23.checked){
+          const lim = Number(sum_fin_gr23.value || s);
+          const grPrem = lim * T_MOYA.risks.gr23;
+          total += grPrem;
+          res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Группа рисков 2+3</td><td class="right">${fmt(grPrem)}</td></tr>`);
+        }
+      }
+
+      // movable
+      if (chk_mov.checked){
+        const s = Number(sum_mov.value || 0);
+        if (s <= 0) { error1.textContent = 'Введите сумму для движимого имущества'; return; }
+        const rate = rateFromTable(T_MOYA.movable, s);
+        if (!rate) { error1.textContent = 'Движимое имущество: сумма вне поддерживаемых диапазонов'; return; }
+        let prem = s * rate;
+        // apply new-for-old to movable
+        if (recomp) prem = prem * 1.1;
+        total += prem;
+        res_body.insertAdjacentHTML('beforeend', `<tr><td>Движимое имущество</td><td class="right">${fmt(prem)}</td></tr>`);
+        if (mov_gr1.checked){
+          const lim = Number(sum_mov_gr1.value || s);
+          const grPrem = lim * T_MOYA.risks.gr1;
+          total += grPrem;
+          res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Группа рисков 1</td><td class="right">${fmt(grPrem)}</td></tr>`);
+        }
+        if (mov_gr23.checked){
+          const lim = Number(sum_mov_gr23.value || s);
+          const grPrem = lim * T_MOYA.risks.gr23;
+          total += grPrem;
+          res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Группа рисков 2+3</td><td class="right">${fmt(grPrem)}</td></tr>`);
+        }
+      }
+
+      // GO
+      if (chk_go.checked){
+        const s = Number(sum_go.value || 0);
+        if (s <= 0) { error1.textContent = 'Введите сумму для ГО'; return; }
+        // if only GO selected -> solo tariff
+        const others = (chk_cons.checked || chk_finish.checked || chk_mov.checked);
+        let rate = 0;
+        if (!others) rate = T_MOYA.go.alone;
+        else {
+          const item = T_MOYA.go.pack.find(r => s >= r.min && s <= r.max);
+          rate = item ? item.rate : 0;
+        }
+        if (!rate) { error1.textContent = 'ГО: сумма вне поддерживаемых диапазонов'; return; }
+        const prem = s * rate;
+        total += prem;
+        res_body.insertAdjacentHTML('beforeend', `<tr><td>Гражданская ответственность</td><td class="right">${fmt(prem)}</td></tr>`);
+      }
+
+      res_total.textContent = fmt(total);
+    } // recalc
+
+    // init hide blocks
+    showHide(blk_cons, false); showHide(blk_finish, false); showHide(blk_mov, false); showHide(blk_go, false);
+  </script>
+</body>
+</html>

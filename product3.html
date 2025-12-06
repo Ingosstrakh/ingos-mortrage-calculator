@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экспресс ГО — Ингосстрах</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Геройская секция -->
+  <header class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <div class="logo-icon">🏛️</div>
+        <h1 class="hero-title">ИНГОССТРАХ</h1>
+        <div class="hero-subtitle">Имущество Физических лиц</div>
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="main-content">
+    <div class="container">
+      <a href="index.html" class="back-button">
+        <span>←</span> <span>Назад к выбору продуктов</span>
+      </a>
+      <div class="header"><h1 style="margin:0">Экспресс ГО</h1></div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="h2">Описание</div>
+      <div class="small-block">Продукт по страхованию ответственности за причинение вреда имуществу, жизни и здоровью третьих лиц при эксплуатации квартиры.</div>
+    </div>
+
+    <div class="grid" style="margin-top:12px">
+      <div class="card">
+        <div class="h2">Варианты</div>
+        <div id="packs"></div>
+      </div>
+
+      <div class="card">
+        <div id="sel" style="display:none">
+          <div class="h2">Вы выбрали</div>
+          <div>Страховая сумма: <b id="sel_sum"></b> ₽</div>
+          <div>Премия: <b id="sel_price"></b> ₽</div>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="h2">Риски</div>
+          <div class="small-block">
+            ► Причинение вреда имуществу, жизни, здоровью третьих лиц в процессе эксплуатации квартиры, в т.ч. при проведении ремонтно-строительных работ;<br>
+            ► Причинение вреда при проведении ремонтно-строительных работ, затрагивающих водонесущие/отопительные/канализационные системы и/или предусматривающих устройство наливного пола;<br>
+            ► Причинение вреда третьим лицам животными застрахованного лица.
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="h2">Запретительные факторы</div>
+          <div class="small-block">
+            • За пределами РФ, опасные территории; • Аренда &lt; 1 мес.; • Коммерческое использование; • Наличные и ценности; • Износ&gt;70% и т.д.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { EXPRESS_GO_PACKS } from './tariffs.express_go.js';
+    const packs = document.getElementById('packs');
+    EXPRESS_GO_PACKS.forEach((p, i) => {
+      const d = document.createElement('div');
+      d.className = 'card';
+      d.style.cursor = 'pointer';
+      d.style.marginBottom = '8px';
+      d.innerHTML = `<div><b>Вариант ${p.id}</b></div><div class="small-block">Сумма: ${p.sum.toLocaleString()} ₽</div><div class="small-block">Премия: ${p.price.toLocaleString()} ₽</div>`;
+      d.onclick = () => select(i);
+      packs.appendChild(d);
+    });
+
+    function select(i){
+      document.querySelectorAll('#packs .card').forEach(c=>c.style.border='1px solid #e6eef9');
+      packs.children[i].style.border = '1px solid var(--accent)';
+      document.getElementById('sel').style.display = 'block';
+      document.getElementById('sel_sum').innerText = EXPRESS_GO_PACKS[i].sum.toLocaleString();
+      document.getElementById('sel_price').innerText = EXPRESS_GO_PACKS[i].price.toLocaleString();
+    }
+  </script>
+</body>
+</html>
