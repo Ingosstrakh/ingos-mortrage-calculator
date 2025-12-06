@@ -40,8 +40,8 @@
 
     <div class="grid" style="margin-top:12px">
       <div class="card">
-        <div class="h2">Варианты</div>
-        <div id="packs"></div>
+        <div class="h2">Варианты пакетов</div>
+        <div id="packs" class="variants-container"></div>
       </div>
 
       <div class="card">
@@ -62,8 +62,20 @@
 
         <div class="box" style="margin-top:12px">
           <div class="h2">Запретительные факторы</div>
-          <div class="small-block">
-            • За пределами РФ, опасные территории; • Аренда &lt; 1 мес.; • Коммерческое использование; • Наличные и ценности; • Износ&gt;70% и т.д.
+          <div class="restrictions-list">
+            <div class="restriction-item">• За пределами РФ</div>
+            <div class="restriction-item">• Опасные территории</div>
+            <div class="restriction-item">• Аварийное состояние, под снос</div>
+            <div class="restriction-item">• Выведенные из жилого фонда</div>
+            <div class="restriction-item">• Квартиры в деревянном доме, в доме с деревянными или смешанными перекрытиями</div>
+            <div class="restriction-item">• Бараки, строения барачного типа</div>
+            <div class="restriction-item">• Наличные деньги, драгметаллы, ценные бумаги, расходные материалы, взрывчатые вещества, движимое имущество в неработоспособном состоянии</div>
+            <div class="restriction-item">• Квартиры/ комнаты коммунального типа коммунальных квартир</div>
+            <div class="restriction-item">• Квартиры с печным отоплением</div>
+            <div class="restriction-item">• Для коммерческих целей</div>
+            <div class="restriction-item">• В аренде меньше месяца</div>
+            <div class="restriction-item">• Износ 70%</div>
+            <div class="restriction-item">• Части квартиры выгодоприобретателя</div>
           </div>
         </div>
 
@@ -76,17 +88,29 @@
     const packs = document.getElementById('packs');
     EXPRESS_GO_PACKS.forEach((p, i) => {
       const d = document.createElement('div');
-      d.className = 'card';
+      d.className = 'variant-card';
       d.style.cursor = 'pointer';
-      d.style.marginBottom = '8px';
-      d.innerHTML = `<div><b>Вариант ${p.id}</b></div><div class="small-block">Сумма: ${p.sum.toLocaleString()} ₽</div><div class="small-block">Премия: ${p.price.toLocaleString()} ₽</div>`;
-      d.onclick = () => select(i);
+      d.innerHTML = `
+        <div class="variant-header"><b>Вариант ${p.id}</b></div>
+        <div class="variant-details">
+          <div class="variant-detail-item">
+            <span class="variant-label">Страховая сумма:</span>
+            <span class="variant-value">${p.sum.toLocaleString()} ₽</span>
+          </div>
+          <div class="variant-detail-item">
+            <span class="variant-label">Премия:</span>
+            <span class="variant-value">${p.price.toLocaleString()} ₽</span>
+          </div>
+        </div>`;
+      d.onclick = () => select(i, d);
       packs.appendChild(d);
     });
 
-    function select(i){
-      document.querySelectorAll('#packs .card').forEach(c=>c.style.border='1px solid #e6eef9');
-      packs.children[i].style.border = '1px solid var(--accent)';
+    function select(i, el){
+      document.querySelectorAll('#packs .variant-card').forEach(c => {
+        c.classList.remove('variant-selected');
+      });
+      el.classList.add('variant-selected');
       document.getElementById('sel').style.display = 'block';
       document.getElementById('sel_sum').innerText = EXPRESS_GO_PACKS[i].sum.toLocaleString();
       document.getElementById('sel_price').innerText = EXPRESS_GO_PACKS[i].price.toLocaleString();
