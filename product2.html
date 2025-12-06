@@ -1,131 +1,142 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<title>Экспресс квартира — демо</title>
-<link rel="stylesheet" href="style.css">
-<style>
-#variants .card { cursor:pointer;border:1px solid #dbe6f7;padding:10px;margin-bottom:8px}
-#variants .card.active{border-color:#2f80ed;background:#eef5ff}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экспресс квартира — Ингосстрах</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Геройская секция -->
+  <header class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <div class="logo-icon">🏛️</div>
+        <h1 class="hero-title">ИНГОССТРАХ</h1>
+        <div class="hero-subtitle">Имущество Физических лиц</div>
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+    </div>
+  </header>
 
-<div class="container">
-<h1>Экспресс квартира</h1>
+  <!-- Основной контент -->
+  <main class="main-content">
+    <div class="container">
+      <a href="index.html" class="back-button">
+        <span>←</span> <span>Назад к выбору продуктов</span>
+      </a>
+      <div class="header"><h1 style="margin:0">Экспресс квартира</h1></div>
 
-<div class="card">
-  <div class="small-block">
-    Продукт по защите квартир с фиксированными вариантами страховых сумм и страховых премий.
-  </div>
-</div>
+      <div class="card" style="margin-top:20px">
+        <div class="h2">Описание продукта</div>
+        <div class="small-block">
+          Готовые фиксированные пакеты: клиент выбирает один из 8 вариантов. Можно подключить гражданскую ответственность (ГО).
+        </div>
+      </div>
 
-<div class="grid">
+      <div class="grid" style="margin-top:20px">
+        <div class="card">
+          <div class="h2">Варианты пакетов</div>
+          <div id="variants" class="variants-container"></div>
 
-<div class="card">
-<h3>Выберите вариант</h3>
-<div id="variants"></div>
+          <div class="box" style="margin-top:16px">
+            <label class="object-label" style="margin:0">
+              <input type="checkbox" id="exp_with_go"> 
+              <span class="object-name">Подключить гражданскую ответственность</span>
+            </label>
+          </div>
+        </div>
 
-<label style="margin-top:10px;display:block">
-<input type="checkbox" id="choiceGO"> Подключить гражданскую ответственность (ГО)
-</label>
-</div>
+        <div class="card">
+          <div class="h2">Детали выбранного варианта</div>
+          <div class="details-box">
+            <div class="detail-row">
+              <span class="detail-label">Отделка:</span>
+              <span class="detail-value" id="exp_finish">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Движимое имущество:</span>
+              <span class="detail-value" id="exp_movable">—</span>
+            </div>
+          </div>
+          <div class="total">К оплате: <span id="exp_price">—</span> ₽</div>
 
-<div class="card">
-<h3>Детали варианта</h3>
+        <div class="box" style="margin-top:12px">
+          <div class="h2">Риски</div>
+          <div class="small-block">
+            ► Пожар, взрыв, повреждение водой, механическое повреждение, кража, грабеж, разбой, умышленные действия, вред со стороны третьих лиц, стихийное бедствие, теракт, короткое замыкание.<br>
+            ► «Повреждение инженерных систем».
+          </div>
+        </div>
 
-<div class="small-block">Отделка и инженерное оборудование:
- <span id="finish">—</span> ₽</div>
+        <div class="box">
+          <div class="h2">Запретительные факторы <span style="font-size:0.9em; font-weight:400; color:#64748b">(не берем на страхование)</span></div>
+          <div class="restrictions-list">
+            <div class="restriction-item">• За пределами РФ, опасные территории, для коммерческих целей</div>
+            <div class="restriction-item">• Общедомовое имущество, части квартир, квартиры в бараках</div>
+            <div class="restriction-item">• Аварийное состояние, под снос, износ более 70%, подвальные помещения</div>
+            <div class="restriction-item">• Квартиры в подвальных помещениях, квартиры по «реновации», квартиры в «коммуналках», ОО в квартирах на стадии СМР</div>
+            <div class="restriction-item">• Квартиры с печным отоплением, в домах с деревянных или смешанных перекрытиях</div>
+            <div class="restriction-item">• Наличные деньги, драгметаллы, ценные бумаги, расходные материалы, взрывчатые вещества, движимое имущество в неработоспособном состоянии</div>
+          </div>
+        </div>
 
-<div class="small-block">Движимое имущество:
- <span id="movable">—</span></div>
+      </div>
+    </div>
+  </main>
 
-<div class="small-block">Лимит ГО:
- <span id="goLimit">—</span></div>
+  <script type="module">
+    import { EXPRESS_PACKS } from './tariffs.express.js';
+    const box = document.getElementById('variants');
+    const exp_finish = document.getElementById('exp_finish');
+    const exp_movable = document.getElementById('exp_movable');
+    const exp_price = document.getElementById('exp_price');
+    const exp_with_go = document.getElementById('exp_with_go');
 
-<div class="total">
-К оплате: <span id="price">—</span> ₽
-</div>
+    let selected = null;
+    EXPRESS_PACKS.forEach(p => {
+      const d = document.createElement('div');
+      d.className = 'variant-card';
+      d.style.cursor = 'pointer';
+      d.innerHTML = `
+        <div class="variant-header"><b>Вариант ${p.id}</b></div>
+        <div class="variant-details">
+          <div class="variant-detail-item">
+            <span class="variant-label">Отделка:</span>
+            <span class="variant-value">${p.finish.toLocaleString()} ₽</span>
+          </div>
+          <div class="variant-detail-item">
+            <span class="variant-label">Движимое:</span>
+            <span class="variant-value">${p.movable ? p.movable.toLocaleString()+' ₽' : 'не страхуется'}</span>
+          </div>
+        </div>`;
+      d.onclick = () => { select(p,d); };
+      box.appendChild(d);
+    });
 
-<hr>
+    function select(p, el){
+      document.querySelectorAll('#variants .variant-card').forEach(c => {
+        c.classList.remove('variant-selected');
+      });
+      el.classList.add('variant-selected');
+      selected = p;
+      render();
+    }
 
-<h3>Риски</h3>
-<p class="small-block">
-Пожар, взрыв, повреждение водой, механическое повреждение, кража,
-грабёж, разбой, умышленные действия, вред третьим лицам,
-стихийное бедствие, теракт, короткое замыкание.
-<br>«Повреждение инженерных систем».
-</p>
-
-<h3>Запретительные факторы</h3>
-<p class="small-block">
-За пределами РФ; опасные территории; аварийное состояние, под снос, «реновация»;
-коммунальные квартиры; дома с деревянными или смешанными перекрытиями;
-для коммерческих целей; аренда менее 1 месяца; износ 70%;
-наличные, драгметаллы, ценные бумаги;
-движимое имущество в неработоспособном состоянии.
-</p>
-
-</div>
-</div>
-</div>
-
-<script>
-const PACKS = [
- {id:1, finish:50000, movable:0, price:550, priceGO:900, go:50000},
- {id:2, finish:50000, movable:50000, price:750, priceGO:1100, go:50000},
- {id:3, finish:100000, movable:0, price:1100, priceGO:1450, go:50000},
- {id:4, finish:100000, movable:50000, price:1300, priceGO:1650, go:50000},
- {id:5, finish:150000, movable:50000, price:1850, priceGO:2200, go:50000},
- {id:6, finish:150000, movable:100000, price:2050, priceGO:2400, go:50000},
- {id:7, finish:150000, movable:150000, price:2250, priceGO:3300, go:150000},
- {id:8, finish:250000, movable:150000, price:3350, priceGO:4050, go:100000},
-];
-
-let current = null;
-
-const box = document.getElementById('variants');
-const f = document.getElementById('finish');
-const m = document.getElementById('movable');
-const g = document.getElementById('goLimit');
-const p = document.getElementById('price');
-const chk = document.getElementById('choiceGO');
-
-function fmt(x){
- return x ? x.toLocaleString()+' ₽' : 'не страхуется';
-}
-
-function draw(){
- if(!current) return;
-
- f.textContent = current.finish.toLocaleString();
- m.textContent = fmt(current.movable);
- g.textContent = current.go.toLocaleString() + ' ₽';
-
- p.textContent = (chk.checked ? current.priceGO : current.price).toLocaleString();
-}
-
-PACKS.forEach(pack=>{
- const d=document.createElement('div');
- d.className='card';
- d.innerHTML=`<b>Вариант ${pack.id}</b><br>
-Отделка: ${pack.finish.toLocaleString()} ₽<br>
-Движимое: ${fmt(pack.movable)}`;
- d.onclick=()=>{
-   document.querySelectorAll('#variants .card')
-           .forEach(x=>x.classList.remove('active'));
-   d.classList.add('active');
-   current=pack;
-   draw();
- };
- box.appendChild(d);
-});
-
-chk.onchange=draw;
-
-// автоселект варианта 1
-box.firstChild.click();
-</script>
-
+    function render(){
+      if(!selected) return;
+      const withGo = exp_with_go.checked;
+      exp_finish.textContent = selected.finish.toLocaleString();
+      exp_movable.textContent = selected.movable ? selected.movable.toLocaleString() : 'не страхуется';
+      exp_price.textContent = (withGo ? selected.withGo : selected.noGo).toLocaleString();
+    }
+    exp_with_go.addEventListener('change', render);
+  </script>
 </body>
 </html>
