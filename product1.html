@@ -43,51 +43,85 @@
         <div class="box controls" style="margin-top:12px">
           <div class="h2">Система возмещения</div>
           <label><input type="radio" name="recomp" value="old" checked> СТАРОЕ ЗА СТАРОЕ</label>
-          <label><input type="radio" name="recomp" value="new"> НОВОЕ ЗА СТАРОЕ ( +10% к премии по конструктиву / отделке / движимому )</label>
+          <label><input type="radio" name="recomp" value="new"> НОВОЕ ЗА СТАРОЕ</label>
         </div>
 
         <div class="box">
-          <div class="h2">Объекты</div>
+          <div class="h2">Объекты страхования</div>
 
-          <label><input type="checkbox" id="chk_cons"> Конструктивные элементы</label>
-          <div id="blk_cons" class="small-block" style="margin-left:14px;display:none">
-            Лимит (руб): <input id="sum_cons" type="number" placeholder="введите сумму"><br>
-            (в расчете показано только итоговое значение — тариф скрыт)
-          </div>
-
-          <label style="margin-top:8px"><input type="checkbox" id="chk_finish"> Отделка и инженерное оборудование</label>
-          <div id="blk_finish" style="margin-left:14px;display:none">
-            Лимит (руб): <input id="sum_finish" type="number" placeholder="введите сумму"><br>
-            <div style="margin-top:6px">
-              <label><input type="checkbox" id="fin_gr1"> Группа рисков 1 <span class="tooltip">?</span></label>
-              <div style="margin-left:8px">Лимит для группы: <input id="sum_fin_gr1" type="number"></div>
-
-              <label style="margin-top:6px"><input type="checkbox" id="fin_gr23"> Группа рисков 2+3 <span class="tooltip">?</span></label>
-              <div style="margin-left:8px">Лимит для группы: <input id="sum_fin_gr23" type="number"></div>
+          <div class="object-item">
+            <label class="object-label"><input type="checkbox" id="chk_cons"> <span class="object-name">Конструктивные элементы</span></label>
+            <div id="blk_cons" class="object-details" style="display:none">
+              <div class="input-field">
+                <label for="sum_cons" class="input-label-small">Лимит (₽):</label>
+                <input id="sum_cons" type="number" placeholder="Введите сумму" class="sum-input">
+              </div>
+              <div class="note-text">В расчете показано только итоговое значение — тариф скрыт</div>
             </div>
           </div>
 
-          <label style="margin-top:8px"><input type="checkbox" id="chk_mov"> Движимое имущество</label>
-          <div id="blk_mov" style="margin-left:14px;display:none">
-            Лимит (руб): <input id="sum_mov" type="number" placeholder="введите сумму"><br>
-            <div style="margin-top:6px">
-              <label><input type="checkbox" id="mov_gr1"> Группа рисков 1</label>
-              <div style="margin-left:8px">Лимит для группы: <input id="sum_mov_gr1" type="number"></div>
+          <div class="object-item">
+            <label class="object-label"><input type="checkbox" id="chk_finish"> <span class="object-name">Отделка и инженерное оборудование</span></label>
+            <div id="blk_finish" class="object-details" style="display:none">
+              <div class="input-field">
+                <label for="sum_finish" class="input-label-small">Лимит (₽):</label>
+                <input id="sum_finish" type="number" placeholder="Введите сумму" class="sum-input">
+              </div>
+              <div class="risk-groups">
+                <label class="risk-label"><input type="checkbox" id="fin_gr1"> Группа рисков 1 <span class="tooltip" title="Атмосферные осадки, давление снега, воздействие воды">?</span></label>
+                <div class="risk-input" id="fin_gr1_input" style="display:none">
+                  <label for="sum_fin_gr1" class="input-label-small">Лимит для группы (₽):</label>
+                  <input id="sum_fin_gr1" type="number" placeholder="Введите сумму" class="sum-input">
+                </div>
 
-              <label style="margin-top:6px"><input type="checkbox" id="mov_gr23"> Группа рисков 2+3</label>
-              <div style="margin-left:8px">Лимит для группы: <input id="sum_mov_gr23" type="number"></div>
+                <label class="risk-label"><input type="checkbox" id="fin_gr23"> Группа рисков 2+3 <span class="tooltip" title="Повреждения вследствие нарушения норм пожарной безопасности, эксплуатации систем, дефектов строительства">?</span></label>
+                <div class="risk-input" id="fin_gr23_input" style="display:none">
+                  <label for="sum_fin_gr23" class="input-label-small">Лимит для группы (₽):</label>
+                  <input id="sum_fin_gr23" type="number" placeholder="Введите сумму" class="sum-input">
+                </div>
+              </div>
             </div>
           </div>
 
-          <label style="margin-top:8px"><input type="checkbox" id="chk_go"> Гражданская ответственность (ГО)</label>
-          <div id="blk_go" style="margin-left:14px;display:none">
-            Лимит (руб): <input id="sum_go" type="number" placeholder="введите сумму">
+          <div class="object-item">
+            <label class="object-label"><input type="checkbox" id="chk_mov"> <span class="object-name">Движимое имущество</span></label>
+            <div id="blk_mov" class="object-details" style="display:none">
+              <div class="input-field">
+                <label for="sum_mov" class="input-label-small">Лимит (₽):</label>
+                <input id="sum_mov" type="number" placeholder="Введите сумму" class="sum-input">
+              </div>
+              <div class="risk-groups">
+                <label class="risk-label"><input type="checkbox" id="mov_gr1"> Группа рисков 1</label>
+                <div class="risk-input" id="mov_gr1_input" style="display:none">
+                  <label for="sum_mov_gr1" class="input-label-small">Лимит для группы (₽):</label>
+                  <input id="sum_mov_gr1" type="number" placeholder="Введите сумму" class="sum-input">
+                </div>
+
+                <label class="risk-label"><input type="checkbox" id="mov_gr23"> Группа рисков 2+3</label>
+                <div class="risk-input" id="mov_gr23_input" style="display:none">
+                  <label for="sum_mov_gr23" class="input-label-small">Лимит для группы (₽):</label>
+                  <input id="sum_mov_gr23" type="number" placeholder="Введите сумму" class="sum-input">
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div style="margin-top:8px" class="small-block">
-            <span class="tooltip">?</span> Подсказки по групповым рискам:<br>
-            <b>Группа рисков 1</b> — атмосферные осадки; давление снега; воздействие воды/жидкостей из систем вне участка.<br>
-            <b>Группа рисков 2+3</b> — повреждения вследствие нарушения норм пожарной безопасности, эксплуатации систем, дефектов строительства и т.п.
+          <div class="object-item">
+            <label class="object-label"><input type="checkbox" id="chk_go"> <span class="object-name">Гражданская ответственность (ГО)</span></label>
+            <div id="blk_go" class="object-details" style="display:none">
+              <div class="input-field">
+                <label for="sum_go" class="input-label-small">Лимит (₽):</label>
+                <input id="sum_go" type="number" placeholder="Введите сумму" class="sum-input">
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="margin-top:20px">
+            <div class="info-title"><span class="tooltip">?</span> Подсказки по групповым рискам:</div>
+            <div class="info-content">
+              <strong>Группа рисков 1</strong> — атмосферные осадки; давление снега; воздействие воды/жидкостей из систем вне участка.<br>
+              <strong>Группа рисков 2+3</strong> — повреждения вследствие нарушения норм пожарной безопасности, эксплуатации систем, дефектов строительства и т.п.
+            </div>
           </div>
 
         </div>
@@ -158,6 +192,12 @@
     const res_total = document.getElementById('res_total');
     const error1 = document.getElementById('error1');
 
+    // Elements for risk groups
+    const fin_gr1_input = document.getElementById('fin_gr1_input');
+    const fin_gr23_input = document.getElementById('fin_gr23_input');
+    const mov_gr1_input = document.getElementById('mov_gr1_input');
+    const mov_gr23_input = document.getElementById('mov_gr23_input');
+
     function showHide(box, checked){
       box.style.display = checked ? 'block' : 'none';
     }
@@ -171,9 +211,26 @@
       recalc();
     }));
 
+    // Risk groups toggle
+    fin_gr1.addEventListener('change', () => {
+      showHide(fin_gr1_input, fin_gr1.checked);
+      recalc();
+    });
+    fin_gr23.addEventListener('change', () => {
+      showHide(fin_gr23_input, fin_gr23.checked);
+      recalc();
+    });
+    mov_gr1.addEventListener('change', () => {
+      showHide(mov_gr1_input, mov_gr1.checked);
+      recalc();
+    });
+    mov_gr23.addEventListener('change', () => {
+      showHide(mov_gr23_input, mov_gr23.checked);
+      recalc();
+    });
+
     [sum_cons, sum_finish, sum_mov, sum_go,
      sum_fin_gr1, sum_fin_gr23, sum_mov_gr1, sum_mov_gr23].forEach(el => el && el.addEventListener('input', recalc));
-    [fin_gr1, fin_gr23, mov_gr1, mov_gr23].forEach(el => el && el.addEventListener('change', recalc));
     document.getElementsByName('recomp').forEach(r => r.addEventListener('change', recalc));
 
     // helpers for ranges
