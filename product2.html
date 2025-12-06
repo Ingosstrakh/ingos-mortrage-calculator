@@ -57,12 +57,16 @@
           <div class="h2">Детали выбранного варианта</div>
           <div class="details-box">
             <div class="detail-row">
-              <span class="detail-label">Отделка:</span>
+              <span class="detail-label">Отделка и инженерное оборудование:</span>
               <span class="detail-value" id="exp_finish">—</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Движимое имущество:</span>
               <span class="detail-value" id="exp_movable">—</span>
+            </div>
+            <div class="detail-row" id="exp_go_row" style="display:none">
+              <span class="detail-label">Гражданская ответственность:</span>
+              <span class="detail-value" id="exp_go_sum">—</span>
             </div>
           </div>
           <div class="total">К оплате: <span id="exp_price">—</span> ₽</div>
@@ -98,6 +102,20 @@
     const exp_movable = document.getElementById('exp_movable');
     const exp_price = document.getElementById('exp_price');
     const exp_with_go = document.getElementById('exp_with_go');
+    const exp_go_row = document.getElementById('exp_go_row');
+    const exp_go_sum = document.getElementById('exp_go_sum');
+
+    // Страховые суммы ГО для каждого варианта
+    const GO_SUMS = {
+      1: 50000,
+      2: 50000,
+      3: 50000,
+      4: 50000,
+      5: 50000,
+      6: 50000,
+      7: 150000,
+      8: 100000
+    };
 
     let selected = null;
     EXPRESS_PACKS.forEach(p => {
@@ -106,13 +124,13 @@
       d.style.cursor = 'pointer';
       d.innerHTML = `
         <div class="variant-header"><b>Вариант ${p.id}</b></div>
-        <div class="variant-details">
+          <div class="variant-details">
           <div class="variant-detail-item">
-            <span class="variant-label">Отделка:</span>
+            <span class="variant-label">Отделка и инженерное оборудование:</span>
             <span class="variant-value">${p.finish.toLocaleString()} ₽</span>
           </div>
           <div class="variant-detail-item">
-            <span class="variant-label">Движимое:</span>
+            <span class="variant-label">Движимое имущество:</span>
             <span class="variant-value">${p.movable ? p.movable.toLocaleString()+' ₽' : 'не страхуется'}</span>
           </div>
         </div>`;
@@ -132,9 +150,22 @@
     function render(){
       if(!selected) return;
       const withGo = exp_with_go.checked;
-      exp_finish.textContent = selected.finish.toLocaleString();
-      exp_movable.textContent = selected.movable ? selected.movable.toLocaleString() : 'не страхуется';
-      exp_price.textContent = (withGo ? selected.withGo : selected.noGo).toLocaleString();
+      exp_finish.textContent = selected.finish.toLocaleString() + ' ₽';
+      exp_movable.textContent = selected.movable ? selected.movable.toLocaleString() + ' ₽' : 'не страхуется';
+      exp_price.textContent = (withGo ? selected.withGo : selected.noGo).toLocaleString() + ' ₽';
+      
+      // Отображение ГО
+      if (withGo && selected.id) {
+        const goSum = GO_SUMS[selected.id];
+        if (goSum) {
+          exp_go_row.style.display = 'flex';
+          exp_go_sum.textContent = goSum.toLocaleString() + ' ₽';
+        } else {
+          exp_go_row.style.display = 'none';
+        }
+      } else {
+        exp_go_row.style.display = 'none';
+      }
     }
     exp_with_go.addEventListener('change', render);
   </script>
