@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Платинум Экспресс. Квартира — Ингосстрах</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <script src="tariffs.platinum.express.js"></script>
+</head>
+<body>
+  <!-- Геройская секция -->
+  <header class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <div class="logo-icon">🏛️</div>
+        <h1 class="hero-title">ИНГОССТРАХ</h1>
+        <div class="hero-subtitle">Имущество Физических лиц</div>
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="main-content">
+    <div class="container">
+      <a href="index.html" class="back-button">
+        <span>←</span> <span>Назад к выбору продуктов</span>
+      </a>
+      <div class="header"><h1 style="margin:0">Платинум Экспресс. Квартира</h1></div>
+
+      <div class="card" style="margin-top:20px">
+        <div class="h2">Описание продукта</div>
+        <div class="small-block">
+          Продукт по защите квартиры с фиксированными вариантами страховых сумм и страховых премий
+          с возможностью страхования:
+          <ul style="margin-top:12px; padding-left:20px">
+            <li>Конструктивных элементов</li>
+            <li>Отделки и инженерного оборудования</li>
+            <li>Движимого имущества</li>
+            <li>Гражданской ответственности</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:20px">
+        <div class="card">
+          <div class="h2">Выбор варианта</div>
+          <div id="variants" class="variants-container"></div>
+        </div>
+
+        <div class="card">
+          <div class="h2">Детали выбранного варианта</div>
+          <div class="details-box">
+            <div class="detail-row">
+              <span class="detail-label">Конструктивные элементы:</span>
+              <span class="detail-value" id="pl_ke">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Отделка и инженерное оборудование:</span>
+              <span class="detail-value" id="pl_oo">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Движимое имущество:</span>
+              <span class="detail-value" id="pl_di">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Гражданская ответственность:</span>
+              <span class="detail-value" id="pl_go">—</span>
+            </div>
+          </div>
+          <div class="total" style="margin-top:16px">
+            Премия (стандарт): <span id="pl_standard">—</span> ₽
+          </div>
+          <div class="total" style="margin-top:12px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: rgba(245, 158, 11, 0.3);">
+            Премия (спец. предложение): <span id="pl_special">—</span>
+          </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="h2">Риски</div>
+          <div class="small-block">
+            <p><b>Имущество:</b><br>
+            Пожар, взрыв, повреждение водой, механическое повреждение, кража, грабеж, разбой,
+            умышленные действия, вред со стороны третьих лиц, стихийное бедствие, теракт,
+            короткое замыкание, «Повреждение инженерных систем».
+            </p>
+            <p style="margin-top:12px"><b>ГО:</b><br>
+            Ответственность за причинение вреда жизни и здоровью третьим лицам.
+            </p>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="h2">Условия специального предложения</div>
+          <div class="small-block">
+            Безусловная франшиза по имущественным рискам (без ГО) — 10 000 руб. при выплате.
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="h2">Запретительные факторы</div>
+          <div class="restrictions-list">
+            <div class="restriction-item">• За пределами РФ, опасные территории</div>
+            <div class="restriction-item">• Износ отделки и оборудования выше 70%</div>
+            <div class="restriction-item">• Аварийное состояние, под снос</div>
+            <div class="restriction-item">• Выведенные из жилого фонда, подвалы</div>
+            <div class="restriction-item">• Для коммерческих целей</div>
+            <div class="restriction-item">• Квартиры в домах с деревянными или смешанными перекрытиями</div>
+            <div class="restriction-item">• Части квартиры выгодоприобретателя</div>
+            <div class="restriction-item">• Бараки, строения барачного типа</div>
+            <div class="restriction-item">• Квартиры с отделкой на стадии строительно‑ремонтных работ</div>
+            <div class="restriction-item">• Квартиры/комнаты коммунального типа</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const select = document.getElementById('variants');
+    const pl_ke = document.getElementById('pl_ke');
+    const pl_oo = document.getElementById('pl_oo');
+    const pl_di = document.getElementById('pl_di');
+    const pl_go = document.getElementById('pl_go');
+    const pl_standard = document.getElementById('pl_standard');
+    const pl_special = document.getElementById('pl_special');
+
+    let selectedVariant = null;
+
+    PRODUCT5_TARIFFS.forEach(v => {
+      const d = document.createElement('div');
+      d.className = 'variant-card';
+      d.style.cursor = 'pointer';
+      d.innerHTML = `
+        <div class="variant-header"><b>Вариант ${v.id}</b></div>
+        <div class="variant-details">
+          <div class="variant-detail-item">
+            <span class="variant-label">Премия (стандарт):</span>
+            <span class="variant-value">${v.standard.toLocaleString()} ₽</span>
+          </div>
+          ${v.special ? `
+          <div class="variant-detail-item">
+            <span class="variant-label">Премия (спец. предложение):</span>
+            <span class="variant-value">${v.special.toLocaleString()} ₽</span>
+          </div>
+          ` : ''}
+        </div>`;
+      d.onclick = () => selectVariant(v, d);
+      select.appendChild(d);
+    });
+
+    function selectVariant(v, el) {
+      document.querySelectorAll('#variants .variant-card').forEach(c => {
+        c.classList.remove('variant-selected');
+      });
+      el.classList.add('variant-selected');
+      selectedVariant = v;
+      render();
+    }
+
+    function render() {
+      if (!selectedVariant) {
+        pl_ke.textContent = '—';
+        pl_oo.textContent = '—';
+        pl_di.textContent = '—';
+        pl_go.textContent = '—';
+        pl_standard.textContent = '—';
+        pl_special.textContent = '—';
+        return;
+      }
+
+      const v = selectedVariant;
+      pl_ke.textContent = v.ke > 0 ? v.ke.toLocaleString() + ' ₽' : 'не страхуется';
+      pl_oo.textContent = v.oo > 0 ? v.oo.toLocaleString() + ' ₽' : 'не страхуется';
+      pl_di.textContent = v.di > 0 ? v.di.toLocaleString() + ' ₽' : 'не страхуется';
+      pl_go.textContent = v.go > 0 ? v.go.toLocaleString() + ' ₽' : 'не страхуется';
+      pl_standard.textContent = v.standard.toLocaleString();
+      pl_special.textContent = v.special ? v.special.toLocaleString() + ' ₽' : 'недоступно';
+    }
+  </script>
+</body>
+</html>
