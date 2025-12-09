@@ -125,7 +125,6 @@
         <div class="card">
           <div class="h2">Итог расчёта</div>
           <div id="error" class="error"></div>
-          <button id="calcBtn" class="calc-button">Рассчитать</button>
           <div class="total">Итого: <span id="total">0</span> ₽</div>
 
           <div class="box" style="margin-top:12px">
@@ -257,30 +256,41 @@
     }
 
     // events
-    document.getElementById('cov_finish').addEventListener('change', () => {
+    const covFinish = document.getElementById('cov_finish');
+    const covMovable = document.getElementById('cov_movable');
+    const covLiab = document.getElementById('cov_liab');
+    const hasStove = document.getElementById('hasStove');
+    const sumFinish = document.getElementById('sum_finish');
+    const sumMovable = document.getElementById('sum_movable');
+    const sumLiab = document.getElementById('sum_liab');
+    const finishRisk1 = document.getElementById('finish_risk1');
+    const finishRisk23 = document.getElementById('finish_risk23');
+    const movRisk1 = document.getElementById('mov_risk1');
+    const movRisk23 = document.getElementById('mov_risk23');
+
+    console.log('Event elements found:', !!covFinish, !!covMovable, !!covLiab, !!hasStove, !!sumFinish, !!sumMovable, !!sumLiab);
+
+    if (covFinish) covFinish.addEventListener('change', () => {
       showBaseRisks();
       recalc();
     });
-    document.getElementById('cov_movable').addEventListener('change', () => {
+    if (covMovable) covMovable.addEventListener('change', () => {
       showBaseRisks();
       recalc();
     });
-    document.getElementById('cov_liab').addEventListener('change', recalc);
+    if (covLiab) covLiab.addEventListener('change', recalc);
+    if (hasStove) hasStove.addEventListener('change', recalc);
+    if (sumFinish) sumFinish.addEventListener('input', recalc);
+    if (sumMovable) sumMovable.addEventListener('input', recalc);
+    if (sumLiab) sumLiab.addEventListener('input', recalc);
+    if (finishRisk1) finishRisk1.addEventListener('change', recalc);
+    if (finishRisk23) finishRisk23.addEventListener('change', recalc);
+    if (movRisk1) movRisk1.addEventListener('change', recalc);
+    if (movRisk23) movRisk23.addEventListener('change', recalc);
 
-    document.getElementsByName('material').forEach(r => r.addEventListener('change', recalc));
-    document.getElementById('hasStove').addEventListener('change', recalc);
-
-    document.getElementById('sum_finish').addEventListener('input', recalc);
-    document.getElementById('sum_movable').addEventListener('input', recalc);
-    document.getElementById('sum_liab').addEventListener('input', recalc);
-
-    document.getElementById('finish_risk1').addEventListener('change', recalc);
-    document.getElementById('finish_risk23').addEventListener('change', recalc);
-    document.getElementById('mov_risk1').addEventListener('change', recalc);
-    document.getElementById('mov_risk23').addEventListener('change', recalc);
-
-    // Кнопка расчета
-    document.getElementById('calcBtn').addEventListener('click', recalc);
+    document.getElementsByName('material').forEach(r => {
+      if (r) r.addEventListener('change', recalc);
+    });
 
     // init
     showBaseRisks();
