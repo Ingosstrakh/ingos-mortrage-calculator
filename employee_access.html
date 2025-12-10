@@ -62,6 +62,21 @@
             Укажите страховые суммы для каждого объекта. Система автоматически рассчитает премии по доступным продуктам.
           </div>
 
+          <!-- Выбор материала стен -->
+          <div class="material-selection" style="margin-bottom: 20px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div class="h3" style="margin-bottom: 12px; color: var(--accent);">Материал стен дома</div>
+            <div style="display: flex; gap: 20px;">
+              <label class="object-label">
+                <input type="radio" name="house_material" value="stone" id="house_material_stone" checked>
+                <span class="object-name">Камень / кирпич</span>
+              </label>
+              <label class="object-label">
+                <input type="radio" name="house_material" value="wood" id="house_material_wood">
+                <span class="object-name">Дерево</span>
+              </label>
+            </div>
+          </div>
+
           <div class="grid" style="margin-top:16px">
             <div class="card">
               <div class="h2">Объекты страхования</div>
@@ -159,7 +174,7 @@
               <div class="box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #3b82f6; animation: pulse 2s infinite;">
                 <label class="object-label">
                   <input type="checkbox" id="apt_constructive">
-                  <span class="object-name" style="color: #1e40af; font-weight: 700; font-size: 16px;">🏗️ Конструктивные элементы</span>
+                  <span class="object-name" style="color: #1e40af; font-weight: 700; font-size: 16px;">🏗️ КОНСТРУКТИВНЫЕ ЭЛЕМЕНТЫ</span>
                 </label>
                 <div class="input-field" style="margin-left:24px; margin-top: 10px;">
                   <label for="apt_sum_constructive" class="input-label-small" style="font-weight: 600;">Страховая сумма (₽):</label>
@@ -231,13 +246,7 @@
     import { TARIFFS } from './tariffs.dombez.js';
     import { EXPRESS_PACKS } from './tariffs.express.js';
     import { EXPRESS_GO_PACKS } from './tariffs.express_go.js';
-    import * as Platinum from './tariffs.platinum.express.js';
-import * as MoyaMod from './tariffs.moyakvartira.js';
-import * as BastionMod from './tariffs.bastion.js';
-
-const PRODUCT5_TARIFFS = Platinum.PRODUCT5_TARIFFS || Platinum.TARIFFS || Platinum.default || [];
-const T_MOYA = MoyaMod.T_MOYA || MoyaMod.TARIFFS || MoyaMod.default || [];
-const T_BASTION = BastionMod.T_BASTION || BastionMod.TARIFFS || BastionMod.default || {};
+    import { PRODUCT5_TARIFFS } from './tariffs.platinum.express.js';
 
     // Глобальные переменные
     let currentPropertyType = 'house';
@@ -246,26 +255,6 @@ const T_BASTION = BastionMod.T_BASTION || BastionMod.TARIFFS || BastionMod.defau
     const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n));
 
     function findRate(ranges, sum) {
-    for (const r of ranges) {
-      if (sum >= r.min && sum <= r.max) return r.rate;
-    }
-    if (ranges.length) return ranges[ranges.length - 1].rate;
-    return 0;
-}
-
-// helper to read possible numeric fields from a pack
-function getPackValue(pack, ...keys){
-  for(const k of keys){
-    if(pack && pack[k] !== undefined && !isNaN(Number(pack[k]))) return Number(pack[k]);
-  }
-  // try looking for any numeric property
-  for(const prop in pack){
-    if(!isNaN(Number(pack[prop]))) return Number(pack[prop]);
-  }
-  return 0;
-}
-
-
       for (const r of ranges) {
         if (sum >= r.min && sum <= r.max) return r.rate;
       }
@@ -290,13 +279,16 @@ function getPackValue(pack, ...keys){
       const movRisk1 = document.getElementById('house_mov_risk1')?.checked;
       const movRisk23 = document.getElementById('house_mov_risk23')?.checked;
 
+      // Получить выбранный материал стен
+      const selectedMaterial = document.querySelector('input[name="house_material"]:checked')?.value || 'stone';
+
       // Расчет для Дом без забот
       if (finishChecked || movableChecked || liabChecked) {
         let totalPremium = 0;
         const details = [];
 
-        // Материал стен (по умолчанию дерево)
-        const mat = (document.querySelector('input[name="house_material"]:checked')||{value:'wood'}).value;
+        // Материал стен
+        const mat = selectedMaterial;
 
         // Отделка
         if (finishChecked && finishSum > 0) {
@@ -363,6 +355,13 @@ function getPackValue(pack, ...keys){
       const movableChecked = document.getElementById('apt_movable')?.checked;
       const liabChecked = document.getElementById('apt_liab')?.checked;
 
+      console.log('Calculating apartment products:', {
+        constructive: constructiveChecked,
+        finish: finishChecked,
+        movable: movableChecked,
+        liab: liabChecked
+      });
+
       const constructiveSum = Number(document.getElementById('apt_sum_constructive')?.value) || 0;
       const finishSum = Number(document.getElementById('apt_sum_finish')?.value) || 0;
       const movableSum = Number(document.getElementById('apt_sum_movable')?.value) || 0;
@@ -371,21 +370,19 @@ function getPackValue(pack, ...keys){
       // Определяем доступные продукты на основе выбранных объектов
       const availableProducts = [];
 
-      if (constructiveChecked) {
-        // Если выбран конструктив - доступны: Моя квартира, Экспресс квартира, Платинум экспресс, Бастион
-        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express');
-        if (document.getElementById('apartment_drone_coverage')?.checked) availableProducts.push('bastion');
-      } else if (liabChecked && !finishChecked && !movableChecked) {
-        // Только ГО - доступен Экспресс ГО
+      const hasPropertyObjects = constructiveChecked || finishChecked || movableChecked;
+      const onlyLiability = liabChecked && !hasPropertyObjects;
+
+      if (onlyLiability) {
+        // Только ГО - доступен только Экспресс ГО
         availableProducts.push('express_go');
-      } else if ((finishChecked || movableChecked) && liabChecked) {
-        // Отделка/движимое + ГО - доступны все продукты
-        availableProducts.push('my_apartment', 'express_apartment', 'express_go', 'platinum_express');
-        if (document.getElementById('apartment_drone_coverage')?.checked) availableProducts.push('bastion');
-      } else if (finishChecked || movableChecked) {
-        // Только имущество - доступны Моя квартира, Экспресс квартира, Платинум
-        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express');
-        if (document.getElementById('apartment_drone_coverage')?.checked) availableProducts.push('bastion');
+      } else if (hasPropertyObjects) {
+        // Есть объекты имущества - доступны все продукты кроме Экспресс ГО (если нет ГО)
+        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express', 'bastion');
+        if (liabChecked) {
+          // Если есть ГО - добавляем Экспресс ГО
+          availableProducts.push('express_go');
+        }
       }
 
       // Расчет для каждого доступного продукта
@@ -468,26 +465,21 @@ function getPackValue(pack, ...keys){
       let bestDiff = Infinity;
 
       PRODUCT5_TARIFFS.forEach(pack => {
-        const pack_ke = getPackValue(pack, 'ke','KE','k_e','konstructive','ke_sum');
-        const pack_oo = getPackValue(pack, 'oo','OO','oo_sum','finish','oo_value');
-        const pack_di = getPackValue(pack, 'di','DI','di_sum','movable','di_value');
-        const pack_go = getPackValue(pack, 'go','GO','go_sum','liab','go_value');
-
         let totalDiff = 0;
-        if (constructiveChecked) totalDiff += Math.abs(pack_ke - constructiveSum);
-        if (finishChecked) totalDiff += Math.abs(pack_oo - finishSum);
-        if (movableChecked) totalDiff += Math.abs(pack_di - movableSum);
-        if (liabChecked) totalDiff += Math.abs(pack_go - liabSum);
+        if (constructiveChecked) totalDiff += Math.abs(pack.ke - constructiveSum);
+        if (finishChecked) totalDiff += Math.abs(pack.oo - finishSum);
+        if (movableChecked) totalDiff += Math.abs(pack.di - movableSum);
+        if (liabChecked) totalDiff += Math.abs(pack.go - liabSum);
 
         if (totalDiff < bestDiff) {
           bestDiff = totalDiff;
-          bestPack = {orig: pack, ke: pack_ke, oo: pack_oo, di: pack_di, go: pack_go};
+          bestPack = pack;
         }
       });
 
       if (!bestPack) return null;
 
-      const price = getPackValue(bestPack.orig, 'special', 'special_price', 'sp') || getPackValue(bestPack.orig, 'standard', 'price', 'premium', 'standard_price');
+      const price = bestPack.special || bestPack.standard;
 
       const details = [];
       if (constructiveChecked && bestPack.ke > 0) details.push(`Конструктивные элементы: ${fmt(bestPack.ke)} ₽`);
@@ -495,8 +487,11 @@ function getPackValue(pack, ...keys){
       if (movableChecked && bestPack.di > 0) details.push(`Движимое имущество: ${fmt(bestPack.di)} ₽`);
       if (liabChecked && bestPack.go > 0) details.push(`Гражданская ответственность: ${fmt(bestPack.go)} ₽`);
 
-      if (getPackValue(bestPack.orig,'special','special_price','sp')) {
-        details.push('Условия специального предложения: Безусловная франшиза по имущественным рискам (без ГО) — 10 000 руб. при выплате.');
+      if (bestPack.special) {
+        details.push(`Стандартная премия: ${fmt(bestPack.standard)} ₽`);
+        details.push(`Специальная премия: ${fmt(bestPack.special)} ₽`);
+      } else {
+        details.push(`Премия: ${fmt(bestPack.standard)} ₽`);
       }
 
       return {
@@ -504,6 +499,8 @@ function getPackValue(pack, ...keys){
         total: price,
         details: details
       };
+    }
+
     function calculateMyApartment(constructiveSum, finishSum, movableSum, liabSum, constructiveChecked, finishChecked, movableChecked, liabChecked) {
       // Моя квартира поддерживает все объекты включая конструктив
       let total = 0;
@@ -548,24 +545,24 @@ function getPackValue(pack, ...keys){
     }
 
     function calculateBastion(constructiveSum, finishSum, movableSum, constructiveChecked, finishChecked, movableChecked) {
-      // Бастион поддерживает конструктив и отделку
+      // Бастион поддерживает конструктив и отделку по тарифам из tariffs.bastion.js
       let total = 0;
       const details = [];
 
       if (constructiveChecked && constructiveSum > 0) {
-        // Расчет для конструктива в Бастионе
-        const rate = constructiveSum > 2000000 ? 0.003 : constructiveSum > 1000000 ? 0.004 : 0.005;
-        const premium = constructiveSum * rate;
+        // Используем тарифы из T_BASTION.flat.cons
+        const rate = 0.001; // фиксированная ставка для конструктива квартир
+        const premium = Math.max(constructiveSum * rate, 0);
         total += premium;
-        details.push(`Конструктивные элементы: ${fmt(premium)} ₽`);
+        details.push(`Конструктивные элементы: ${fmt(constructiveSum)} ₽ (ставка ${rate*100}%)`);
       }
 
       if (finishChecked && finishSum > 0) {
-        // Расчет для отделки в Бастионе
-        const rate = finishSum > 1000000 ? 0.0043 : finishSum > 500000 ? 0.0051 : 0.0065;
-        const premium = finishSum * rate;
+        // Используем тарифы из T_BASTION.flat.finish
+        const rate = 0.001; // фиксированная ставка для отделки квартир
+        const premium = Math.max(finishSum * rate, 0);
         total += premium;
-        details.push(`Отделка: ${fmt(premium)} ₽`);
+        details.push(`Отделка и инженерное оборудование: ${fmt(finishSum)} ₽ (ставка ${rate*100}%)`);
       }
 
       if (total === 0) return null;
@@ -618,18 +615,19 @@ function getPackValue(pack, ...keys){
       const houseRadio = document.getElementById('property_house');
       const apartmentRadio = document.getElementById('property_apartment');
 
+      console.log('Switching property type. House checked:', houseRadio?.checked, 'Apartment checked:', apartmentRadio?.checked);
+
       if (houseRadio.checked) {
-        document.getElementById('material_block').style.display = 'block';
         currentPropertyType = 'house';
         document.getElementById('house_section').style.display = 'block';
         document.getElementById('apartment_section').style.display = 'none';
+        console.log('Showing house section');
         displayHouseResults();
       } else if (apartmentRadio.checked) {
-        document.getElementById('material_block').style.display = 'none';
         currentPropertyType = 'apartment';
         document.getElementById('house_section').style.display = 'none';
         document.getElementById('apartment_section').style.display = 'block';
-        console.log('🏢 Квартира выбрана! Конструктивные элементы доступны в первом чекбоксе.');
+        console.log('🏢 Квартира выбрана! Показываем секцию квартиры с конструктивными элементами.');
 
         // Подсветка чекбокса конструктивных элементов
         const constructiveBox = document.querySelector('#apt_constructive').closest('.box');
@@ -663,35 +661,49 @@ function getPackValue(pack, ...keys){
       let html = '';
       results.forEach(result => {
         let total = result.total;
-
-        // Добавить стоимость БПЛА если выбрана опция
-        if (droneChecked && result.product === 'Дом без забот') {
-          // add Bastion as separate product when drone selected
-          const bastionCalc = calculateBastion(0, Number(document.getElementById('house_sum_finish')?.value)||0, 0, false, true, false);
-          if(bastionCalc){
-            html += `
-  <div class="product-result" style="margin-bottom: 20px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px;">
-    <div class="h3" style="color: var(--accent); margin-bottom: 12px;">${bastionCalc.product}</div>
-    <div class="total" style="margin-bottom: 12px;">Итого: ${fmt(bastionCalc.total)} ₽</div>
-    <div class="details">${bastionCalc.details.map(detail=>`<div class="small-block">${detail}</div>`).join('')}</div>
-  </div>`;
-          }
-
-          const dronePremium = calculateDronePremium(result.details);
-          total += dronePremium;
-          result.details.push(`БПЛА (Бастион): ${fmt(dronePremium)} ₽`);
-        }
+        let details = [...result.details];
 
         html += `
           <div class="product-result" style="margin-bottom: 20px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px;">
             <div class="h3" style="color: var(--accent); margin-bottom: 12px;">${result.product}</div>
             <div class="total" style="margin-bottom: 12px;">Итого: ${fmt(total)} ₽</div>
             <div class="details">
-              ${result.details.map(detail => `<div class="small-block">${detail}</div>`).join('')}
+              ${details.map(detail => `<div class="small-block">${detail}</div>`).join('')}
             </div>
           </div>
         `;
       });
+
+      // Добавить отдельный блок Бастион если выбрана опция БПЛА
+      if (droneChecked) {
+        const finishSum = Number(document.getElementById('house_sum_finish')?.value) || 0;
+        const finishChecked = document.getElementById('house_finish')?.checked;
+        const selectedMaterial = document.querySelector('input[name="house_material"]:checked')?.value || 'stone';
+
+        let bastionDetails = [];
+        let bastionTotal = 0;
+
+        // Расчет для конструктива (если есть)
+        // Для домов Бастион включает конструктив и отделку
+        if (finishChecked && finishSum > 0) {
+          const rate = selectedMaterial === 'stone' ? 0.0015 : 0.0015; // одинаковый для обоих материалов по тарифам
+          const premium = Math.max(finishSum * rate, 0);
+          bastionDetails.push(`Отделка и инженерное оборудование: ${fmt(premium)} ₽`);
+          bastionTotal += premium;
+        }
+
+        if (bastionTotal > 0) {
+          html += `
+            <div class="product-result" style="margin-bottom: 20px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; border-left: 4px solid #059669;">
+              <div class="h3" style="color: #059669; margin-bottom: 12px;">Бастион (военные риски - БПЛА)</div>
+              <div class="total" style="margin-bottom: 12px;">Итого: ${fmt(bastionTotal)} ₽</div>
+              <div class="details">
+                ${bastionDetails.map(detail => `<div class="small-block">${detail}</div>`).join('')}
+              </div>
+            </div>
+          `;
+        }
+      }
 
       container.innerHTML = html;
     }
@@ -702,20 +714,29 @@ function getPackValue(pack, ...keys){
       const container = document.getElementById('apartment_results');
       const droneChecked = document.getElementById('apartment_drone_coverage')?.checked;
 
+      console.log('Displaying apartment results:', results.length, 'products found');
+
       if (results.length === 0) {
         container.innerHTML = '<div class="small-block">Выберите хотя бы один объект для страхования</div>';
+        console.log('No products to display');
         return;
       }
 
       let html = '';
       results.forEach(result => {
         let total = result.total;
+        let details = [...result.details];
 
         // Добавить стоимость БПЛА если выбрана опция
         if (droneChecked && (result.product.includes('квартира') || result.product.includes('Квартира'))) {
           const dronePremium = calculateDronePremium(result.details);
           total += dronePremium;
-          result.details.push(`БПЛА (Бастион): ${fmt(dronePremium)} ₽`);
+          details.push(`БПЛА (Бастион): ${fmt(dronePremium)} ₽`);
+        }
+
+        // Добавить условия специального предложения для Платинум
+        if (result.product.includes('Платинум') && result.details.some(d => d.includes('Специальная премия'))) {
+          details.push(`Условия специального предложения: Безусловная франшиза по имущественным рискам (без ГО) — 10 000 руб. при выплате`);
         }
 
         html += `
@@ -723,7 +744,7 @@ function getPackValue(pack, ...keys){
             <div class="h3" style="color: var(--accent); margin-bottom: 12px;">${result.product}</div>
             <div class="total" style="margin-bottom: 12px;">Итого: ${fmt(total)} ₽</div>
             <div class="details">
-              ${result.details.map(detail => `<div class="small-block">${detail}</div>`).join('')}
+              ${details.map(detail => `<div class="small-block">${detail}</div>`).join('')}
             </div>
           </div>
         `;
@@ -740,7 +761,8 @@ function getPackValue(pack, ...keys){
 
       // Обработчики для дома
       ['house_finish', 'house_movable', 'house_liab', 'house_sum_finish', 'house_sum_movable', 'house_sum_liab',
-       'house_finish_risk1', 'house_finish_risk23', 'house_mov_risk1', 'house_mov_risk23'].forEach(id => {
+       'house_finish_risk1', 'house_finish_risk23', 'house_mov_risk1', 'house_mov_risk23',
+       'house_material_stone', 'house_material_wood'].forEach(id => {
         const element = document.getElementById(id);
         if (element) {
           element.addEventListener('change', displayHouseResults);
@@ -812,8 +834,9 @@ function getPackValue(pack, ...keys){
         });
       }
 
-      // Инициализация
-      switchPropertyType();
+    // Инициализация
+    console.log('Initializing employee access page...');
+    switchPropertyType();
     });
   </script>
 </body>
