@@ -11,6 +11,59 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.7; }
     }
+
+    .subobject-group {
+      margin: 12px 0;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .risk-groups {
+      margin-top: 8px;
+      margin-left: 12px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .calc-button {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .calc-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .variant-info {
+      color: #059669;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .special-offer {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1px solid #10b981;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .special-offer-title {
+      color: #059669;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
@@ -56,23 +109,31 @@
   <div class="card">
     <h3>Ввод сумм по подобъектам</h3>
     <label>Конструктивные элементы: <input id="sum_cons" type="number" value="0"></label>
-    <label>Отделка и инженерное оборудование: <input id="sum_finish" type="number" value="0"></label>
-    <label>Движимое имущество: <input id="sum_movable" type="number" value="0"></label>
-    <label>Гражданская ответственность: <input id="sum_go" type="number" value="0"></label>
 
-    <div style="margin-top:8px">
-      <label><input id="risk_finish_gr1" type="checkbox"> Группа рисков 1 (к Отделке)</label>
-      <label><input id="risk_finish_gr23" type="checkbox"> Группа рисков 2+3 (к Отделке)</label>
-      <label><input id="risk_movable_gr1" type="checkbox"> Группа рисков 1 (к ДИ)</label>
-      <label><input id="risk_movable_gr23" type="checkbox"> Группа рисков 2+3 (к ДИ)</label>
+    <div class="subobject-group">
+      <label>Отделка и инженерное оборудование: <input id="sum_finish" type="number" value="0"></label>
+      <div class="risk-groups">
+        <label><input id="risk_finish_gr1" type="checkbox"> Группа рисков 1</label>
+        <label><input id="risk_finish_gr23" type="checkbox"> Группа рисков 2+3</label>
+      </div>
     </div>
+
+    <div class="subobject-group">
+      <label>Движимое имущество: <input id="sum_movable" type="number" value="0"></label>
+      <div class="risk-groups">
+        <label><input id="risk_movable_gr1" type="checkbox"> Группа рисков 1</label>
+        <label><input id="risk_movable_gr23" type="checkbox"> Группа рисков 2+3</label>
+      </div>
+    </div>
+
+    <label>Гражданская ответственность: <input id="sum_go" type="number" value="0"></label>
 
     <div style="margin-top:8px">
       <label><input id="insure_drone" type="checkbox"> Застраховать от БПЛА (Бастион)</label>
     </div>
 
     <div style="margin-top:12px">
-      <button id="btnCalc">Рассчитать</button>
+      <button id="btnCalc" class="calc-button">Рассчитать</button>
     </div>
   </div>
 
@@ -232,21 +293,33 @@ function calcMoya(sums){
 function calcExpress(sums){
   // find best matching express pack from EXPRESS_PACKS based on finish and movable
   if(!EXPRESS_PACKS) return null;
-  // find pack where finish >= pack.finish and movable >= pack.movable
-  let matched = EXPRESS_PACKS.find(p => sums.finish >= p.finish && sums.movable >= (p.movable||0));
-  if(!matched) {
-    // find nearest where finish >=
-    matched = EXPRESS_PACKS.slice().reverse().find(p => sums.finish >= p.finish) || EXPRESS_PACKS[0];
-  }
-  if(!matched) return null;
+
+  // Find the best matching pack based on sums entered by user
+  let bestMatch = null;
+  let bestScore = -1;
+
+  EXPRESS_PACKS.forEach(pack => {
+    let score = 0;
+    // Score based on how well the pack matches the entered sums
+    if (sums.finish >= pack.finish) score += 2;
+    if (sums.movable >= (pack.movable || 0)) score += 1;
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = pack;
+    }
+  });
+
+  if(!bestMatch) return null;
+
   const withGo = document.getElementById('insure_drone').checked;
-  const price = withGo ? matched.withGo : matched.noGo;
+  const price = withGo ? bestMatch.withGo : bestMatch.noGo;
 
   // Показываем детализацию пакета
   const parts = [];
-  parts.push({name:'Отделка и инженерное оборудование', sum: matched.finish, rate: null, prem: null});
-  if (matched.movable && matched.movable > 0) {
-    parts.push({name:'Движимое имущество', sum: matched.movable, rate: null, prem: null});
+  parts.push({name:'Вариант ' + bestMatch.id, sum: null, rate: null, prem: null, isVariant: true});
+  parts.push({name:'Отделка и инженерное оборудование', sum: bestMatch.finish, rate: null, prem: null});
+  if (bestMatch.movable && bestMatch.movable > 0) {
+    parts.push({name:'Движимое имущество', sum: bestMatch.movable, rate: null, prem: null});
   } else {
     parts.push({name:'Движимое имущество', sum: 0, rate: null, prem: null});
   }
@@ -254,42 +327,66 @@ function calcExpress(sums){
     parts.push({name:'Гражданская ответственность', sum: 50000, rate: null, prem: null});
   }
 
-  return {parts: parts, total: price, productName:'Экспресс квартира'};
+  return {parts: parts, total: price, productName:'Экспресс квартира', variant: bestMatch.id};
 }
 
 function calcPlatinum(sums){
   if(!PRODUCT5_TARIFFS) return null;
-  // PRODUCT5_TARIFFS array of packages with oo, di, go etc and standard price
-  // choose first variant where sums meet at least oo and di thresholds
-  let matched = PRODUCT5_TARIFFS.find(p => {
-    const okOo = (sums.finish>= (p.oo||0));
-    const okDi = (sums.movable>= (p.di||0));
-    const okGo = (sums.liability>= (p.go||0));
-    return okOo && okDi && okGo;
+
+  // Find the best matching package based on user's sums
+  let bestMatch = null;
+  let bestFitScore = -1;
+
+  PRODUCT5_TARIFFS.forEach(pack => {
+    let fitScore = 0;
+    if (sums.construct > 0 && pack.ke >= sums.construct) fitScore += 1;
+    if (sums.finish > 0 && pack.oo >= sums.finish) fitScore += 2;
+    if (sums.movable > 0 && pack.di >= sums.movable) fitScore += 1;
+    if (sums.liability > 0 && pack.go >= sums.liability) fitScore += 1;
+
+    if (fitScore > bestFitScore) {
+      bestFitScore = fitScore;
+      bestMatch = pack;
+    }
   });
-  if(!matched){
-    // fallback choose nearest by oo
-    matched = PRODUCT5_TARIFFS.slice().reverse().find(p => sums.finish >= (p.oo||0)) || PRODUCT5_TARIFFS[0];
-  }
+
+  if(!bestMatch) return null;
+
   const withDrone = document.getElementById('insure_drone').checked;
-  const price = withDrone ? (matched.special || matched.standard) : matched.standard;
+  const hasSpecial = bestMatch.special !== null && bestMatch.special !== undefined;
+  const price = withDrone ? (bestMatch.special || bestMatch.standard) : bestMatch.standard;
 
   // Показываем детализацию пакета
   const parts = [];
-  if (matched.ke && matched.ke > 0) {
-    parts.push({name:'Конструктивные элементы', sum: matched.ke, rate: null, prem: null});
+  parts.push({name:'Вариант ' + bestMatch.id, sum: null, rate: null, prem: null, isVariant: true});
+
+  if (bestMatch.ke && bestMatch.ke > 0) {
+    parts.push({name:'Конструктивные элементы', sum: bestMatch.ke, rate: null, prem: null});
   }
-  if (matched.oo && matched.oo > 0) {
-    parts.push({name:'Отделка и инженерное оборудование', sum: matched.oo, rate: null, prem: null});
+  if (bestMatch.oo && bestMatch.oo > 0) {
+    parts.push({name:'Отделка и инженерное оборудование', sum: bestMatch.oo, rate: null, prem: null});
   }
-  if (matched.di && matched.di > 0) {
-    parts.push({name:'Движимое имущество', sum: matched.di, rate: null, prem: null});
+  if (bestMatch.di && bestMatch.di > 0) {
+    parts.push({name:'Движимое имущество', sum: bestMatch.di, rate: null, prem: null});
   }
-  if (matched.go && matched.go > 0) {
-    parts.push({name:'Гражданская ответственность', sum: matched.go, rate: null, prem: null});
+  if (bestMatch.go && bestMatch.go > 0) {
+    parts.push({name:'Гражданская ответственность', sum: bestMatch.go, rate: null, prem: null});
   }
 
-  return {parts: parts, total: price, productName:'Платинум Экспресс Квартира'};
+  if (hasSpecial) {
+    parts.push({name:'Стандартная премия', sum: null, rate: null, prem: bestMatch.standard, isStandard: true});
+    parts.push({name:'Специальная премия', sum: null, rate: null, prem: bestMatch.special, isSpecial: true});
+  }
+
+  return {
+    parts: parts,
+    total: price,
+    productName:'Платинум Экспресс Квартира',
+    variant: bestMatch.id,
+    hasSpecial: hasSpecial,
+    standardPrice: bestMatch.standard,
+    specialPrice: bestMatch.special
+  };
 }
 
 function calcBastionFlat(sums){
@@ -316,9 +413,24 @@ function renderResultBlock(name, calc){
   const title = document.createElement('div'); title.innerHTML='<b>'+name+'</b>';
   div.appendChild(title);
   const ul = document.createElement('div');
+
   calc.parts.forEach(p=>{
     const line = document.createElement('div');
-    if (p.prem !== null) {
+
+    if (p.isVariant) {
+      // Вариант пакета
+      line.className = 'variant-info';
+      line.textContent = p.name;
+    } else if (p.isStandard) {
+      // Стандартная премия
+      line.textContent = p.name + ': ' + (p.prem ? p.prem.toFixed(2)+' ₽' : '—');
+      line.style.color = '#6b7280';
+    } else if (p.isSpecial) {
+      // Специальная премия
+      line.textContent = p.name + ': ' + (p.prem ? p.prem.toFixed(2)+' ₽' : '—');
+      line.style.color = '#059669';
+      line.style.fontWeight = '600';
+    } else if (p.prem !== null) {
       // Для продуктов с расчетом по частям (Моя квартира, Бастион)
       line.textContent = p.name + ': ' + (p.prem ? p.prem.toFixed(2)+' ₽' : (p.rate ? (p.rate*100).toFixed(3)+'%' : '—'));
     } else {
@@ -327,8 +439,21 @@ function renderResultBlock(name, calc){
     }
     ul.appendChild(line);
   });
+
   const tot = document.createElement('div'); tot.className='total'; tot.textContent='Итого: '+(calc.total?calc.total.toFixed(2)+' ₽':'0 ₽');
   div.appendChild(ul); div.appendChild(tot);
+
+  // Добавляем информацию о специальном предложении для Platinum
+  if (calc.hasSpecial && name.includes('Платинум')) {
+    const specialDiv = document.createElement('div');
+    specialDiv.className = 'special-offer';
+    specialDiv.innerHTML = `
+      <div class="special-offer-title">Условия специального предложения</div>
+      <div>Безусловная франшиза по имущественным рискам (без ГО) — 10 000 руб. при выплате</div>
+    `;
+    div.appendChild(specialDiv);
+  }
+
   return div;
 }
 
