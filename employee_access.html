@@ -64,6 +64,57 @@
       font-weight: 600;
       margin-bottom: 4px;
     }
+
+    /* Стили для результатов расчетов */
+    .results .product {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #fafbfc;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .results .product b {
+      color: #1e40af;
+      font-size: 18px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .results .product .total {
+      font-weight: bold;
+      font-size: 16px;
+      color: #059669;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 2px solid #10b981;
+    }
+
+    .results .product div {
+      margin: 4px 0;
+      line-height: 1.4;
+    }
+
+    .results .product .variant-info {
+      color: #059669;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .results .product .special-offer {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1px solid #10b981;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .results .product .special-offer-title {
+      color: #059669;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
@@ -138,9 +189,9 @@
   </div>
 
   <div class="card results">
-    <h3>Результаты</h3>
+    <h3>Результаты расчетов</h3>
     <div id="results"></div>
-      </div>
+  </div>
     </div>
   </main>
 
@@ -183,6 +234,10 @@ async function loadNamed(path, name) {
 
 // load all tariffs we may need
 let T_DOMBEZ, T_MOYA, EXPRESS_PACKS, PRODUCT5_TARIFFS, T_BASTION, EXPRESS_GO_PACKS;
+
+// helper function for formatting numbers
+const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n));
+
 async function loadAll() {
   T_DOMBEZ = await loadNamed('./tariffs.dombez.js','TARIFFS');
   T_MOYA = await loadNamed('./tariffs.moyakvartira.js','T_MOYA');
@@ -295,21 +350,37 @@ function calcExpress(sums){
   if(!EXPRESS_PACKS) return null;
 
   // Find the best matching pack based on sums entered by user
+  // Prioritize packs that best match the entered amounts
   let bestMatch = null;
   let bestScore = -1;
 
   EXPRESS_PACKS.forEach(pack => {
     let score = 0;
-    // Score based on how well the pack matches the entered sums
-    if (sums.finish >= pack.finish) score += 2;
-    if (sums.movable >= (pack.movable || 0)) score += 1;
+    const finishDiff = Math.abs(pack.finish - sums.finish);
+    const movableDiff = Math.abs((pack.movable || 0) - sums.movable);
+
+    // Better score for closer matches
+    if (finishDiff <= 50000) score += 3;
+    else if (finishDiff <= 100000) score += 2;
+    else if (finishDiff <= 200000) score += 1;
+
+    if (movableDiff <= 25000) score += 2;
+    else if (movableDiff <= 50000) score += 1;
+
+    // Prefer packs that are not too much larger than needed
+    if (pack.finish <= sums.finish * 1.5) score += 1;
+    if ((pack.movable || 0) <= sums.movable * 1.5) score += 1;
+
     if (score > bestScore) {
       bestScore = score;
       bestMatch = pack;
     }
   });
 
-  if(!bestMatch) return null;
+  // Fallback to the most expensive pack if no good match found
+  if (!bestMatch) {
+    bestMatch = EXPRESS_PACKS[EXPRESS_PACKS.length - 1];
+  }
 
   const withGo = document.getElementById('insure_drone').checked;
   const price = withGo ? bestMatch.withGo : bestMatch.noGo;
@@ -328,6 +399,22 @@ function calcExpress(sums){
   }
 
   return {parts: parts, total: price, productName:'Экспресс квартира', variant: bestMatch.id};
+}
+
+function calcExpressGO(sums){
+  if(!EXPRESS_GO_PACKS || sums.liability <= 0) return null;
+
+  // Найти наиболее подходящий пакет по сумме ГО
+  const pack = EXPRESS_GO_PACKS.find(p => p.sum >= sums.liability) || EXPRESS_GO_PACKS[EXPRESS_GO_PACKS.length - 1];
+
+  return {
+    product: 'Экспресс ГО',
+    total: pack.price,
+    details: [
+      `Страховая сумма: ${fmt(pack.sum)} ₽`,
+      `Премия: ${fmt(pack.price)} ₽`
+    ]
+  };
 }
 
 function calcPlatinum(sums){
@@ -414,7 +501,17 @@ function renderResultBlock(name, calc){
   div.appendChild(title);
   const ul = document.createElement('div');
 
-  calc.parts.forEach(p=>{
+  // Handle different formats
+  if (calc.details) {
+    // For Express GO
+    calc.details.forEach(detail => {
+      const line = document.createElement('div');
+      line.textContent = detail;
+      ul.appendChild(line);
+    });
+  } else if (calc.parts) {
+    // For other products with parts
+    calc.parts.forEach(p=>{
     const line = document.createElement('div');
 
     if (p.isVariant) {
@@ -437,14 +534,15 @@ function renderResultBlock(name, calc){
       // Для пакетных продуктов (Экспресс, Платинум) - показываем страховые суммы
       line.textContent = p.name + ': ' + (p.sum ? p.sum.toLocaleString('ru-RU') + ' ₽' : 'не включено');
     }
-    ul.appendChild(line);
-  });
+      ul.appendChild(line);
+    });
+  }
 
   const tot = document.createElement('div'); tot.className='total'; tot.textContent='Итого: '+(calc.total?calc.total.toFixed(2)+' ₽':'0 ₽');
   div.appendChild(ul); div.appendChild(tot);
 
   // Добавляем информацию о специальном предложении для Platinum
-  if (calc.hasSpecial && name.includes('Платинум')) {
+  if (calc.hasSpecial && name.includes('Платинум') && calc.parts) {
     const specialDiv = document.createElement('div');
     specialDiv.className = 'special-offer';
     specialDiv.innerHTML = `
@@ -494,16 +592,31 @@ if(type==='house'){
       if(bast) results.appendChild(renderResultBlock('Бастион (военный риск)', bast));
     }
   } else {
-    // apartment: show multiple products
-    const mMoya = calcMoya(sums);
-    if(mMoya) results.appendChild(renderResultBlock('Моя квартира', mMoya));
-    const expr = calcExpress(sums);
-    if(expr) results.appendChild(renderResultBlock(expr.productName||'Экспресс квартира', expr));
-    const plat = calcPlatinum(sums);
-    if(plat) results.appendChild(renderResultBlock(plat.productName||'Платинум', plat));
-    if(!document.getElementById('insure_drone')?.checked) return;
-const bast = calcBastionFlat(sums);
-    if(bast) results.appendChild(renderResultBlock(bast.productName||'Бастион', bast));
+    // apartment: determine which products to show based on entered data
+    const hasPropertyObjects = sums.construct > 0 || sums.finish > 0 || sums.movable > 0;
+    const hasLiabilityOnly = sums.liability > 0 && !hasPropertyObjects;
+
+    if (hasLiabilityOnly) {
+      // Only liability - show Express GO
+      const expressGO = calcExpressGO(sums);
+      if(expressGO) results.appendChild(renderResultBlock(expressGO.product, expressGO));
+    } else if (hasPropertyObjects) {
+      // Property objects present - show relevant products
+      const mMoya = calcMoya(sums);
+      if(mMoya) results.appendChild(renderResultBlock('Моя квартира', mMoya));
+
+      const expr = calcExpress(sums);
+      if(expr) results.appendChild(renderResultBlock(expr.productName||'Экспресс квартира', expr));
+
+      const plat = calcPlatinum(sums);
+      if(plat) results.appendChild(renderResultBlock(plat.productName||'Платинум Экспресс Квартира', plat));
+
+      // Show Bastion if drone coverage is selected
+      if(document.getElementById('insure_drone')?.checked) {
+        const bast = calcBastionFlat(sums);
+        if(bast) results.appendChild(renderResultBlock(bast.productName||'Бастион (военные риски)', bast));
+      }
+    }
   }
 });
 
