@@ -6,6 +6,15 @@
   <title>Сотрудник СК Добро пожаловать.</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <script>
+    // Password protection
+    const correctPassword = 'INGO';
+    const password = prompt('Введите пароль для доступа к системе сотрудников СК:');
+    if (password !== correctPassword) {
+      alert('Неверный пароль!');
+      window.location.href = 'index.html';
+    }
+  </script>
   <style>
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -142,9 +151,6 @@
         <span>←</span> <span>Назад к выбору продуктов</span>
       </a>
       <div class="header"><h1 style="margin:0">Мультивариативный продукт СК</h1></div>
-  <div class="card">
-    <strong>выбери и получи результат</strong>
-  </div>
 
   <div class="card">
     <h3>Что страхуем?</h3>
