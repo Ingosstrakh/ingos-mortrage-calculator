@@ -34,6 +34,10 @@
 
       <p class="small" style="margin-top:20px; text-align: center; color: #64748b; font-size: 1.1rem;">Выберите продукт для просмотра / тестирования (открыть соответствующую страницу):</p>
 
+      <div class="employee-access" style="text-align: center; margin: 20px 0;">
+        <button onclick="checkEmployeeAccess()" class="calc-button" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">Для сотрудников СК</button>
+      </div>
+
     <div class="grid">
       <div class="card">
         <a href="product1.html" style="text-decoration:none;color:var(--accent)"><div class="h2">Моя квартира</div></a>
@@ -66,5 +70,16 @@
       </div>
     </div>
   </main>
+
+  <script>
+    function checkEmployeeAccess() {
+      const password = prompt('Введите пароль для доступа к системе сотрудников СК:');
+      if (password === 'INGO') {
+        window.location.href = 'employee_access.html';
+      } else {
+        alert('Неверный пароль!');
+      }
+    }
+  </script>
 </body>
 </html>
