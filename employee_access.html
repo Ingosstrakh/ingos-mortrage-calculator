@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Система сотрудников СК — Ингосстрах</title>
+  <title>Employee access — расчёт</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -21,7 +21,7 @@
       <div class="hero-logo">
         <div class="logo-icon">🏛️</div>
         <h1 class="hero-title">ИНГОССТРАХ</h1>
-        <div class="hero-subtitle">Система сотрудников СК</div>
+        <div class="hero-subtitle">Сравнение продуктов ИФЛ</div>
       </div>
     </div>
     <div class="hero-decoration">
@@ -37,7 +37,7 @@
       <a href="index.html" class="back-button">
         <span>←</span> <span>Назад к выбору продуктов</span>
       </a>
-      <div class="header"><h1 style="margin:0">Система подбора страховых продуктов</h1></div>
+      <div class="header"><h1 style="margin:0">Employee access — расчёт</h1></div>
 
       <!-- Выбор типа недвижимости -->
       <div class="card" style="margin-top:20px">
@@ -59,6 +59,11 @@
         <div class="card" style="margin-top:20px">
           <div class="h2">Шаг 2: Параметры страхования дома</div>
           <div class="small-block" style="margin-bottom: 16px;">
+          <div id="material_block" style="margin-bottom:12px;">
+            <label style="margin-right:12px"><input type="radio" name="house_material" value="stone" id="house_mat_stone"> Кирпич / Камень</label>
+            <label><input type="radio" name="house_material" value="wood" id="house_mat_wood" checked> Дерево</label>
+          </div>
+    
             Укажите страховые суммы для каждого объекта. Система автоматически рассчитает премии по доступным продуктам.
           </div>
 
@@ -270,7 +275,7 @@
         const details = [];
 
         // Материал стен (по умолчанию дерево)
-        const mat = 'wood';
+        const mat = (document.querySelector('input[name="house_material"]:checked')||{value:'wood'}).value;
 
         // Отделка
         if (finishChecked && finishSum > 0) {
@@ -347,16 +352,19 @@
 
       if (constructiveChecked) {
         // Если выбран конструктив - доступны: Моя квартира, Экспресс квартира, Платинум экспресс, Бастион
-        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express', 'bastion');
+        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express');
+        if (document.getElementById('apartment_drone_coverage')?.checked) availableProducts.push('bastion');
       } else if (liabChecked && !finishChecked && !movableChecked) {
         // Только ГО - доступен Экспресс ГО
         availableProducts.push('express_go');
       } else if ((finishChecked || movableChecked) && liabChecked) {
         // Отделка/движимое + ГО - доступны все продукты
-        availableProducts.push('my_apartment', 'express_apartment', 'express_go', 'platinum_express', 'bastion');
+        availableProducts.push('my_apartment', 'express_apartment', 'express_go', 'platinum_express');
+        if (document.getElementById('apartment_drone_coverage')?.checked) availableProducts.push('bastion');
       } else if (finishChecked || movableChecked) {
         // Только имущество - доступны Моя квартира, Экспресс квартира, Платинум
-        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express', 'bastion');
+        availableProducts.push('my_apartment', 'express_apartment', 'platinum_express');
+        if (document.getElementById('apartment_drone_coverage')?.checked) availableProducts.push('bastion');
       }
 
       // Расчет для каждого доступного продукта
@@ -590,11 +598,16 @@
       const apartmentRadio = document.getElementById('property_apartment');
 
       if (houseRadio.checked) {
+        document.getElementById('material_block').style.display = 'block';
+        // hide apartment-only constructive when house
+        const aptBox = document.querySelector('#apt_constructive')?.closest('.box'); if (aptBox) aptBox.style.display='none';
         currentPropertyType = 'house';
         document.getElementById('house_section').style.display = 'block';
         document.getElementById('apartment_section').style.display = 'none';
         displayHouseResults();
       } else if (apartmentRadio.checked) {
+        document.getElementById('material_block').style.display = 'none';
+        const aptBox = document.querySelector('#apt_constructive')?.closest('.box'); if (aptBox) aptBox.style.display='block';
         currentPropertyType = 'apartment';
         document.getElementById('house_section').style.display = 'none';
         document.getElementById('apartment_section').style.display = 'block';
@@ -652,6 +665,12 @@
       });
 
       container.innerHTML = html;
+      try{
+        const totalsEls = Array.from(container.querySelectorAll('.total'));
+        const totals = totalsEls.map(el=>Number(el.textContent.replace(/\D/g,''))||0);
+        const sumAll = totals.reduce((a,b)=>a+b,0);
+        container.insertAdjacentHTML('beforeend', `<div style="margin-top:12px;padding:12px;border-top:1px solid #eee;font-weight:700">Общий итог: ${fmt(sumAll)} ₽</div>`);
+      }catch(e){}
     }
 
     // Отображение результатов для квартиры
@@ -688,6 +707,12 @@
       });
 
       container.innerHTML = html;
+      try{
+        const totalsEls = Array.from(container.querySelectorAll('.total'));
+        const totals = totalsEls.map(el=>Number(el.textContent.replace(/\D/g,''))||0);
+        const sumAll = totals.reduce((a,b)=>a+b,0);
+        container.insertAdjacentHTML('beforeend', `<div style="margin-top:12px;padding:12px;border-top:1px solid #eee;font-weight:700">Общий итог: ${fmt(sumAll)} ₽</div>`);
+      }catch(e){}
     }
 
     // Инициализация
