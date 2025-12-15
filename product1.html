@@ -175,6 +175,10 @@
 
     // helpers
     const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n));
+    const fmtSum = n => new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(n));
 
     // UI elements
     const chk_cons = document.getElementById('chk_cons');
@@ -274,7 +278,10 @@
         // apply new-for-old only to constructive
         if (recomp) prem = prem * 1.1;
         total += prem;
-        res_body.insertAdjacentHTML('beforeend', `<tr><td>Конструктивные элементы</td><td class="right">${fmt(prem)}</td></tr>`);
+        res_body.insertAdjacentHTML(
+          'beforeend',
+          `<tr><td>Моя квартира (Конструктивные элементы) страховая сумма ${fmtSum(s)} = ${fmt(prem)} ₽</td><td class="right">${fmt(prem)}</td></tr>`
+        );
         res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Стандартный пакет</td><td class="right">${fmt(prem)}</td></tr>`);
       }
 
@@ -288,7 +295,10 @@
         // apply new-for-old to finish
         if (recomp) prem = prem * 1.1;
         total += prem;
-        res_body.insertAdjacentHTML('beforeend', `<tr><td>Отделка и инж. оборудование</td><td class="right">${fmt(prem)}</td></tr>`);
+        res_body.insertAdjacentHTML(
+          'beforeend',
+          `<tr><td>Моя квартира (Отделка и инж. оборудование) страховая сумма ${fmtSum(s)} = ${fmt(prem)} ₽</td><td class="right">${fmt(prem)}</td></tr>`
+        );
         // group risks for finish
         if (fin_gr1.checked){
           const lim = Number(sum_fin_gr1.value || s);
@@ -314,7 +324,10 @@
         // apply new-for-old to movable
         if (recomp) prem = prem * 1.1;
         total += prem;
-        res_body.insertAdjacentHTML('beforeend', `<tr><td>Движимое имущество</td><td class="right">${fmt(prem)}</td></tr>`);
+        res_body.insertAdjacentHTML(
+          'beforeend',
+          `<tr><td>Моя квартира (Движимое имущество) страховая сумма ${fmtSum(s)} = ${fmt(prem)} ₽</td><td class="right">${fmt(prem)}</td></tr>`
+        );
         if (mov_gr1.checked){
           const lim = Number(sum_mov_gr1.value || s);
           const grPrem = lim * T_MOYA.risks.gr1;
@@ -344,7 +357,10 @@
         if (!rate) { error1.textContent = 'ГО: сумма вне поддерживаемых диапазонов'; return; }
         const prem = s * rate;
         total += prem;
-        res_body.insertAdjacentHTML('beforeend', `<tr><td>Гражданская ответственность</td><td class="right">${fmt(prem)}</td></tr>`);
+        res_body.insertAdjacentHTML(
+          'beforeend',
+          `<tr><td>Моя квартира (Гражданская ответственность) страховая сумма ${fmtSum(s)} = ${fmt(prem)} ₽</td><td class="right">${fmt(prem)}</td></tr>`
+        );
       }
 
       res_total.textContent = fmt(total);
