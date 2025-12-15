@@ -119,10 +119,16 @@
     const res = get('b_result');
 
     function fmt(n){return new Intl.NumberFormat('ru-RU').format(Math.round(n));}
+    function fmtSum(n){
+      return new Intl.NumberFormat('ru-RU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(Number(n));
+    }
 
     function updateBastion(){
       err.textContent = '';
-      res.textContent = 'Итоговая премия: 0 ₽';
+      res.innerHTML = 'Итоговая премия: 0 ₽';
       const type = document.querySelector('input[name="objt"]:checked')?.value;
       if (!type) { err.textContent = 'Выберите тип объекта'; return; }
 
@@ -131,20 +137,26 @@
       if (!consChecked && !finishChecked) { err.textContent = 'Выберите хотя бы один под-объект'; return; }
 
       let total = 0;
+      const details = [];
       if (consChecked){
         const v = Number(get('b_sum_cons').value || 0);
         const min = T_BASTION[type].cons.min, max = T_BASTION[type].cons.max;
         if (v < min || v > max) { err.textContent = `Конструктив: допустимый диапазон ${min.toLocaleString()} — ${max.toLocaleString()} ₽`; return; }
-        total += v * T_BASTION[type].cons.rate;
+        const prem = v * T_BASTION[type].cons.rate;
+        total += prem;
+        details.push(`Бастион (Конструктивные элементы) страховая сумма ${fmtSum(v)} = ${fmt(prem)} ₽`);
       }
       if (finishChecked){
         const v = Number(get('b_sum_finish').value || 0);
         const min = T_BASTION[type].finish.min, max = T_BASTION[type].finish.max;
         if (v < min || v > max) { err.textContent = `Отделка: допустимый диапазон ${min.toLocaleString()} — ${max.toLocaleString()} ₽`; return; }
-        total += v * T_BASTION[type].finish.rate;
+        const prem = v * T_BASTION[type].finish.rate;
+        total += prem;
+        details.push(`Бастион (Отделка и инж. оборудование) страховая сумма ${fmtSum(v)} = ${fmt(prem)} ₽`);
       }
 
-      res.textContent = 'Итоговая премия: ' + fmt(total) + ' ₽';
+      res.innerHTML = 'Итоговая премия: ' + fmt(total) + ' ₽' +
+        (details.length ? '<br>' + details.map(d => `<div>${d}</div>`).join('') : '');
     }
 
     // Добавляем обработчики событий
