@@ -163,6 +163,10 @@
 
     // helpers
     const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n));
+    const fmtSum = n => new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(n));
 
     // UI elements
     const error = document.getElementById('error');
@@ -203,7 +207,7 @@
           if (stove) rate *= TARIFFS.stoveCoefficient;
           const premium = sum * rate;
           totalPremium += premium;
-          detailItems.push(`Отделка и инж. оборудование: ${fmt(premium)} ₽`);
+          detailItems.push(`Дом без забот (Отделка и инж. оборудование) страховая сумма ${fmtSum(sum)} = ${fmt(premium)} ₽`);
 
           if (document.getElementById('finish_risk1').checked) {
             const extra = sum * 0.002;
@@ -225,7 +229,7 @@
           const rate = findRate(TARIFFS.movable, sum);
           const premium = sum * rate;
           totalPremium += premium;
-          detailItems.push(`Движимое имущество: ${fmt(premium)} ₽`);
+          detailItems.push(`Дом без забот (Движимое имущество) страховая сумма ${fmtSum(sum)} = ${fmt(premium)} ₽`);
 
           if (document.getElementById('mov_risk1').checked) {
             const extra = sum * 0.002;
@@ -247,7 +251,7 @@
           const rate = findRate(TARIFFS.liability, sum);
           const premium = sum * rate;
           totalPremium += premium;
-          detailItems.push(`Гражданская ответственность: ${fmt(premium)} ₽`);
+          detailItems.push(`Дом без забот (Гражданская ответственность) страховая сумма ${fmtSum(sum)} = ${fmt(premium)} ₽`);
         }
       }
 
