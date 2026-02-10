@@ -14,10 +14,11 @@ export const T_MOYA = {
   go: {
     alone: 0.007,
     pack: [
-      { min: 100000, max: 500000, rate: 0.0033 },
-      { min: 500001, max: 1000000, rate: 0.0022 },
-      { min: 1000001, max: 5000000, rate: 0.0020 }
+      { min: 100000, max: 499999, rate: 0.0033 },
+      { min: 500000, max: 999999, rate: 0.0022 },
+      { min: 1000000, max: 5000000, rate: 0.0020 }
     ]
   },
   risks: { gr1: 0.0020, gr23: 0.0015 }
 };
+
