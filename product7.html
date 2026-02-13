@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личные вещи — Ингосстрах</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Геройская секция -->
+  <header class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <div class="logo-icon">🏛️</div>
+        <h1 class="hero-title">ИНГОССТРАХ</h1>
+        <div class="hero-subtitle">Имущество Физических лиц</div>
+      </div>
+    </div>
+    <div class="hero-decoration">
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+      <div class="decoration-element"></div>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="main-content">
+    <div class="container">
+      <a href="index.html" class="back-button">
+        <span>←</span> <span>Назад к выбору продуктов</span>
+      </a>
+      <div class="header"><h1 style="margin:0">Личные вещи</h1></div>
+
+      <div class="card" style="margin-top:20px">
+        <div class="h2">Описание продукта</div>
+        <div class="small-block">
+          Продукт по защите мобильной техники (кроме аксессуаров), ручной клади (за исключением их содержимого), верхней одежды, спортинвентаря.
+          <p style="margin-top:12px"><b>Объекты страхования:</b></p>
+          <ul style="margin-top:8px; padding-left:20px">
+            <li>Мобильная техника (телефоны, планшеты, ноутбуки, фотоаппараты, видеокамеры, электронные книги)</li>
+            <li>Ручная кладь</li>
+            <li>Верхняя одежда</li>
+            <li>Спортинвентарь (лыжи, сноуборды, велосипеды, палатки, дайверское снаряжение, коньки, спортивная экипировка)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:20px">
+        <div class="card">
+          <div class="h2">Выбор варианта</div>
+          <div id="variants" class="variants-container"></div>
+        </div>
+
+        <div class="card">
+          <div class="h2">Детали выбранного варианта</div>
+          <div class="details-box">
+            <div class="detail-row">
+              <span class="detail-label">Страховая сумма:</span>
+              <span class="detail-value" id="lv_sum">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ПДТЛ + Повреждения по неосторожности:</span>
+              <span class="detail-value" id="lv_povrezhd">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ПДТЛ + Типовые риски:</span>
+              <span class="detail-value" id="lv_tipovye">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ПДТЛ + Повреждения + Типовые (все риски):</span>
+              <span class="detail-value" id="lv_all">—</span>
+            </div>
+          </div>
+          <div class="box" style="margin-top:12px">
+            <div class="h3">Выберите набор рисков</div>
+            <label class="object-label" style="margin:0">
+              <input type="radio" name="risk_combo" value="povrezhd">
+              <span class="object-name">ПДТЛ + Повреждения по неосторожности</span>
+            </label>
+            <label class="object-label" style="margin-left:16px">
+              <input type="radio" name="risk_combo" value="tipovye">
+              <span class="object-name">ПДТЛ + Типовые риски</span>
+            </label>
+            <label class="object-label" style="margin-left:16px">
+              <input type="radio" name="risk_combo" value="all" checked>
+              <span class="object-name">Все риски</span>
+            </label>
+          </div>
+          <div class="total" style="margin-top:16px">
+            Премия: <span id="lv_premium">—</span> ₽
+          </div>
+
+          <div class="box" style="margin-top:12px">
+            <div class="h2">Риски</div>
+            <div class="small-block">
+              <p><b>ПДТЛ:</b> Грабеж, разбой, кража, кража из транспортных средств, умышленные действия третьих лиц.</p>
+              <p style="margin-top:12px"><b>Повреждение по неосторожности</b></p>
+              <p style="margin-top:12px"><b>Типовые риски</b> (в помещении): пожар, взрыв, повреждение водой, механическое повреждение, стихийное бедствие, теракт, короткое замыкание.</p>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="h2">Запретительные факторы (исключения)</div>
+            <div class="restrictions-list">
+              <div class="restriction-item">• Мобильная техника: аксессуары и расходные материалы (наушники, гарнитура, чехлы, носители информации, внешние блоки питания, адаптеры, шнуры, внешние клавиатуры, стилусы, футляры и т.п.)</div>
+              <div class="restriction-item">• Спортинвентарь: аксессуары и сопутствующие элементы (бутылки, мячи, лыжные палки, чехлы, футляры, расходные материалы, защитные элементы — шлемы, наколенники и т.п.)</div>
+              <div class="restriction-item">• Изделия из меха, аксессуары и сопутствующие элементы (шляпы, броши, шарфы, перчатки и т.п.)</div>
+              <div class="restriction-item">• Содержимое карманов, чемоданов и т.п. (не относящееся к имуществу по условиям продукта)</div>
+              <div class="restriction-item">• Дефекты носящие чисто эстетический характер (царапины, сколы, пятна, повреждения окраски и т.д.)</div>
+              <div class="restriction-item">• Естественный износ и/или деформация имущества</div>
+              <div class="restriction-item">• Естественные, неизбежные повреждения в процессе эксплуатации</div>
+              <div class="restriction-item">• Утеря имущества</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { LICHNIE_VESHCHI_PACKS } from './tariffs.lichnie_veschi.js';
+
+    const select = document.getElementById('variants');
+    const lv_sum = document.getElementById('lv_sum');
+    const lv_povrezhd = document.getElementById('lv_povrezhd');
+    const lv_tipovye = document.getElementById('lv_tipovye');
+    const lv_all = document.getElementById('lv_all');
+    const lv_premium = document.getElementById('lv_premium');
+
+    let selectedVariant = null;
+
+    const fmt = n => new Intl.NumberFormat('ru-RU').format(n);
+
+    LICHNIE_VESHCHI_PACKS.forEach(v => {
+      const d = document.createElement('div');
+      d.className = 'variant-card';
+      d.style.cursor = 'pointer';
+      d.innerHTML = `
+        <div class="variant-header"><b>Вариант ${v.id}</b></div>
+        <div class="variant-details">
+          <div class="variant-detail-item">
+            <span class="variant-label">Страховая сумма:</span>
+            <span class="variant-value">${fmt(v.sum)} ₽</span>
+          </div>
+          <div class="variant-detail-item">
+            <span class="variant-label">ПДТЛ + Повреждения:</span>
+            <span class="variant-value">${fmt(v.povrezhd)} ₽</span>
+          </div>
+          <div class="variant-detail-item">
+            <span class="variant-label">ПДТЛ + Типовые:</span>
+            <span class="variant-value">${fmt(v.tipovye)} ₽</span>
+          </div>
+          <div class="variant-detail-item">
+            <span class="variant-label">Все риски:</span>
+            <span class="variant-value">${fmt(v.all)} ₽</span>
+          </div>
+        </div>`;
+      d.onclick = () => selectVariant(v, d);
+      select.appendChild(d);
+    });
+
+    function selectVariant(v, el) {
+      document.querySelectorAll('#variants .variant-card').forEach(c => {
+        c.classList.remove('variant-selected');
+      });
+      el.classList.add('variant-selected');
+      selectedVariant = v;
+      render();
+    }
+
+    function render() {
+      if (!selectedVariant) {
+        lv_sum.textContent = '—';
+        lv_povrezhd.textContent = '—';
+        lv_tipovye.textContent = '—';
+        lv_all.textContent = '—';
+        lv_premium.textContent = '—';
+        return;
+      }
+
+      const v = selectedVariant;
+      lv_sum.textContent = fmt(v.sum) + ' ₽';
+      lv_povrezhd.textContent = fmt(v.povrezhd) + ' ₽';
+      lv_tipovye.textContent = fmt(v.tipovye) + ' ₽';
+      lv_all.textContent = fmt(v.all) + ' ₽';
+
+      const combo = document.querySelector('input[name="risk_combo"]:checked')?.value || 'all';
+      const premium = combo === 'povrezhd' ? v.povrezhd : combo === 'tipovye' ? v.tipovye : v.all;
+      lv_premium.textContent = fmt(premium);
+    }
+
+    document.querySelectorAll('input[name="risk_combo"]').forEach(r => {
+      r.addEventListener('change', render);
+    });
+  </script>
+</body>
+</html>
