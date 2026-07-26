@@ -79,6 +79,8 @@
                   <label for="sum_fin_gr23" class="input-label-small">Лимит для группы (₽):</label>
                   <input id="sum_fin_gr23" type="number" placeholder="Введите сумму" class="sum-input">
                 </div>
+
+                <label class="risk-label"><input type="checkbox" id="fin_war"> Защита от рисков военных действий</label>
               </div>
             </div>
           </div>
@@ -102,6 +104,8 @@
                   <label for="sum_mov_gr23" class="input-label-small">Лимит для группы (₽):</label>
                   <input id="sum_mov_gr23" type="number" placeholder="Введите сумму" class="sum-input">
                 </div>
+
+                <label class="risk-label"><input type="checkbox" id="mov_war"> Защита от рисков военных действий</label>
               </div>
             </div>
           </div>
@@ -198,8 +202,10 @@
 
     const fin_gr1 = document.getElementById('fin_gr1');
     const fin_gr23 = document.getElementById('fin_gr23');
+    const fin_war = document.getElementById('fin_war');
     const mov_gr1 = document.getElementById('mov_gr1');
     const mov_gr23 = document.getElementById('mov_gr23');
+    const mov_war = document.getElementById('mov_war');
 
     const sum_fin_gr1 = document.getElementById('sum_fin_gr1');
     const sum_fin_gr23 = document.getElementById('sum_fin_gr23');
@@ -238,6 +244,7 @@
       showHide(fin_gr23_input, fin_gr23.checked);
       recalc();
     });
+    fin_war.addEventListener('change', recalc);
     mov_gr1.addEventListener('change', () => {
       showHide(mov_gr1_input, mov_gr1.checked);
       recalc();
@@ -246,6 +253,7 @@
       showHide(mov_gr23_input, mov_gr23.checked);
       recalc();
     });
+    mov_war.addEventListener('change', recalc);
 
     [sum_cons, sum_finish, sum_mov, sum_go,
      sum_fin_gr1, sum_fin_gr23, sum_mov_gr1, sum_mov_gr23].forEach(el => el && el.addEventListener('input', recalc));
@@ -312,6 +320,11 @@
           total += grPrem;
           res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Группа рисков 2+3</td><td class="right">${fmt(grPrem)}</td></tr>`);
         }
+        if (fin_war.checked){
+          const warPrem = s * T_MOYA.warActions.finish;
+          total += warPrem;
+          res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Защита от рисков военных действий</td><td class="right">${fmt(warPrem)}</td></tr>`);
+        }
       }
 
       // movable
@@ -339,6 +352,11 @@
           const grPrem = lim * T_MOYA.risks.gr23;
           total += grPrem;
           res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Группа рисков 2+3</td><td class="right">${fmt(grPrem)}</td></tr>`);
+        }
+        if (mov_war.checked){
+          const warPrem = s * T_MOYA.warActions.movable;
+          total += warPrem;
+          res_body.insertAdjacentHTML('beforeend', `<tr><td class="small-block">— Защита от рисков военных действий</td><td class="right">${fmt(warPrem)}</td></tr>`);
         }
       }
 
